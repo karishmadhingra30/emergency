@@ -1,9 +1,12 @@
-# Crisis Shelter Locator
+# Crisis Shelter Locator & Offline Map Plotter
 
-A Python-based tool that uses Google Maps Places API to identify potential emergency shelter locations (schools, police stations, and fire stations) and export their coordinates to Excel for crisis management planning.
+A comprehensive Python-based toolkit for emergency shelter management:
+1. **Shelter Locator**: Fetches potential shelter locations using Google Maps Places API
+2. **Offline Map Plotter**: Visualizes coordinates from Excel files on interactive offline-capable maps
 
 ## Features
 
+### Shelter Locator
 - Fetches locations of potential emergency shelters:
   - Schools
   - Police Stations
@@ -12,6 +15,15 @@ A Python-based tool that uses Google Maps Places API to identify potential emerg
 - Configurable search location and radius
 - Includes location details: name, coordinates, address, ratings, and operational status
 - Automatic pagination to retrieve all available results
+
+### Offline Map Plotter (NEW)
+- **Read Excel files** with latitude/longitude coordinates
+- **Generate interactive HTML maps** using Leaflet.js and OpenStreetMap
+- **Works offline** after initial map tile load (or with local tile server)
+- **Color-coded markers** by category/type
+- **Interactive popups** with detailed location information
+- **Auto-zoom** to fit all markers
+- **No API key required** for viewing maps
 
 ## Prerequisites
 
@@ -72,7 +84,9 @@ Edit the `.env` file to customize your search:
 
 ## Usage
 
-Run the script:
+### Shelter Locator
+
+Run the shelter locator script:
 
 ```bash
 python shelter_locator.py
@@ -82,6 +96,43 @@ The script will:
 1. Connect to Google Maps Places API
 2. Search for schools, police stations, and fire stations within the specified radius
 3. Export results to an Excel file named `shelters_YYYYMMDD_HHMMSS.xlsx`
+
+### Offline Map Plotter
+
+Generate an interactive map from your Excel file:
+
+```bash
+python offline_map_plotter.py your_file.xlsx
+```
+
+**Basic Examples:**
+```bash
+# Plot data from Excel file (auto-detects lat/lon columns)
+python offline_map_plotter.py shelters_20241114.xlsx
+
+# Specify custom output filename
+python offline_map_plotter.py shelters.xlsx --output my_map.html
+
+# Specify custom column names
+python offline_map_plotter.py data.xlsx --lat Latitude --lon Longitude --name Location
+
+# Specify sheet name and add custom title
+python offline_map_plotter.py data.xlsx --sheet "All Shelters" --title "Emergency Shelters Map"
+```
+
+**Command Line Options:**
+- `--sheet <name>` - Sheet name to read (default: first sheet)
+- `--lat <column>` - Latitude column name (default: 'latitude')
+- `--lon <column>` - Longitude column name (default: 'longitude')
+- `--name <column>` - Name/title column (default: 'name')
+- `--type <column>` - Type/category column for color coding (default: 'type')
+- `--output <file>` - Output HTML file name (default: 'offline_map.html')
+- `--title <title>` - Map title (default: 'Location Map')
+
+**Output:**
+- Creates an HTML file with an interactive map
+- Open the HTML file in any web browser (Chrome, Firefox, Safari, etc.)
+- Works offline after initial tile load (tiles are cached by browser)
 
 ## Output Format
 
@@ -168,6 +219,52 @@ Make sure all dependencies are installed:
 pip install -r requirements.txt
 ```
 
+## Making Maps Fully Offline
+
+By default, the offline map plotter uses OpenStreetMap tiles from the internet. The map will work offline **after** you've loaded it once (tiles are cached by your browser), but for **completely offline** use without any internet connection, you have several options:
+
+### Option 1: Save Complete Web Page (Easiest)
+1. Open the generated HTML map in your browser
+2. Pan and zoom around the area to load tiles
+3. Use your browser's "Save Page As" → "Webpage, Complete" to save all resources
+4. The saved page will work offline with the cached tiles
+
+### Option 2: Download Leaflet.js for Offline Use
+The HTML file currently loads Leaflet from a CDN. To make it fully offline:
+
+1. Download Leaflet.js and CSS:
+```bash
+mkdir -p offline_resources
+cd offline_resources
+wget https://unpkg.com/leaflet@1.9.4/dist/leaflet.css
+wget https://unpkg.com/leaflet@1.9.4/dist/leaflet.js
+wget https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png
+wget https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png
+```
+
+2. Modify the HTML file to reference local files instead of CDN links
+
+### Option 3: Set Up Local Tile Server (Advanced)
+For true offline mapping with full pan/zoom capabilities:
+
+1. **Download map tiles** for your area using tools like:
+   - [TileMill](https://tilemill-project.github.io/tilemill/)
+   - [MapTiler](https://www.maptiler.com/)
+   - Manual download with scripts
+
+2. **Set up a simple tile server**:
+```bash
+# Example using Python's HTTP server
+python -m http.server 8080
+```
+
+3. Place tiles in the correct directory structure: `tiles/{z}/{x}/{y}.png`
+
+4. Run the map plotter with local tiles enabled (modify the script or use custom tile URL)
+
+### Option 4: Use Static Map Images
+If you don't need interactivity, you can generate static map images that are completely offline. Let me know if you need this functionality!
+
 ## Future Enhancements
 
 Potential improvements for production use:
@@ -176,9 +273,13 @@ Potential improvements for production use:
 - Add capacity estimation based on building size
 - Include accessibility information
 - Real-time availability status integration
-- Web interface for visualization
+- Clustering for large datasets
+- Heatmap visualization
+- Distance/routing calculations between shelters
+- Export to KML/GeoJSON formats
 - Database storage instead of Excel
 - Multi-location batch processing
+- Mobile-responsive map interface
 
 ## License
 

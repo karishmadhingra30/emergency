@@ -5,6 +5,10 @@
 *.xlsx
 *.xls
 
+# Generated HTML maps
+*.html
+offline_resources/
+
 # Python
 __pycache__/
 *.py[cod]
