@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Shelter & First Aid Assistant</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 12px;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+
+        /* Map Container */
+        #map {
+            position: absolute;
+            top: 80px;
+            bottom: 0;
+            width: 100%;
+            z-index: 1;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 400px;
+            height: 550px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            z-index: 1001;
+            transition: all 0.3s ease;
+        }
+
+        .chat-container.minimized {
+            height: 60px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .chat-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .chat-toggle {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-toggle:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input-container {
+            padding: 15px;
+            background: white;
+            border-radius: 0 0 15px 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Location Controls */
+        .location-controls {
+            position: absolute;
+            top: 90px;
+            left: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .location-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 5px;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .location-button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Legend */
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            left: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            max-width: 250px;
+        }
+
+        .legend h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+            background: white;
+            border-radius: 18px;
+            width: 60px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .chat-container {
+                width: calc(100% - 40px);
+                height: 400px;
+                right: 20px;
+            }
+
+            .location-controls {
+                top: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏥 Emergency Shelter & First Aid Assistant</h1>
+        <p>Find nearby shelters and get first aid information during emergencies</p>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="location-controls">
+        <button class="location-button" onclick="getMyLocation()">📍 Get My Location</button>
+        <p style="font-size: 12px; margin-top: 10px; color: #666;">Or click on the map to set location</p>
+    </div>
+
+    <div class="legend">
+        <h4>Map Legend</h4>
+        <div class="legend-item">
+            <div class="legend-color" style="background: red;"></div>
+            <span>Schools</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: blue;"></div>
+            <span>Police Stations</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: green;"></div>
+            <span>Fire Stations</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: orange;"></div>
+            <span>Your Location</span>
+        </div>
+    </div>
+
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header" onclick="toggleChat()">
+            <h3>💬 Emergency Assistant</h3>
+            <button class="chat-toggle" id="chatToggle">−</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-content">
+                    Hello! I'm your emergency assistant. I can help you:<br><br>
+                    • Find the nearest shelter<br>
+                    • Provide first aid information<br>
+                    • Show emergency locations on the map<br><br>
+                    How can I help you today?
+                </div>
+            </div>
+            <div class="typing-indicator" id="typingIndicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Ask about shelters or first aid..." onkeypress="handleKeyPress(event)">
+                <button class="send-button" id="sendButton" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize map
+        const map = L.map('map').setView([40.7128, -74.0060], 13);
+
+        // Add tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Store markers
+        let shelterMarkers = [];
+        let userMarker = null;
+        let userLocation = null;
+
+        // Color mapping for shelter types
+        const typeColors = {
+            'schools': 'red',
+            'police_stations': 'blue',
+            'fire_stations': 'green'
+        };
+
+        // Load shelters from backend
+        async function loadShelters() {
+            try {
+                const response = await fetch('http://localhost:5000/shelters');
+                const data = await response.json();
+
+                if (data.success && data.shelters) {
+                    data.shelters.forEach(shelter => {
+                        addShelterMarker(shelter);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading shelters:', error);
+            }
+        }
+
+        // Add shelter marker to map
+        function addShelterMarker(shelter) {
+            const color = typeColors[shelter.type] || 'gray';
+            const icon = L.icon({
+                iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            const marker = L.marker([shelter.latitude, shelter.longitude], { icon })
+                .bindPopup(`
+                    <div style="font-family: Arial, sans-serif;">
+                        <h4 style="margin: 0 0 10px 0;">${shelter.name}</h4>
+                        <p><strong>Type:</strong> ${shelter.type}</p>
+                        <p><strong>Address:</strong> ${shelter.address}</p>
+                        ${shelter.distance_km ? `<p><strong>Distance:</strong> ${shelter.distance_km} km</p>` : ''}
+                    </div>
+                `)
+                .addTo(map);
+
+            shelterMarkers.push(marker);
+        }
+
+        // Get user's location
+        function getMyLocation() {
+            if (navigator.geolocation) {
+                addBotMessage("🔍 Getting your location...");
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        setUserLocation(lat, lon);
+                        addBotMessage(`✓ Location found: ${lat.toFixed(4)}, ${lon.toFixed(4)}`);
+                    },
+                    error => {
+                        addBotMessage("❌ Could not get your location. Please click on the map or grant location permission.");
+                    }
+                );
+            } else {
+                addBotMessage("❌ Geolocation is not supported by your browser. Please click on the map to set your location.");
+            }
+        }
+
+        // Set user location on map
+        function setUserLocation(lat, lon) {
+            userLocation = { lat, lon };
+
+            // Remove existing user marker
+            if (userMarker) {
+                map.removeLayer(userMarker);
+            }
+
+            // Add new user marker
+            const orangeIcon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            userMarker = L.marker([lat, lon], { icon: orangeIcon })
+                .bindPopup('<div style="font-family: Arial;"><h4>Your Location</h4></div>')
+                .addTo(map);
+
+            // Center map on user location
+            map.setView([lat, lon], 13);
+        }
+
+        // Click on map to set location
+        map.on('click', function(e) {
+            setUserLocation(e.latlng.lat, e.latlng.lng);
+            addBotMessage(`📍 Location set to: ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`);
+        });
+
+        // Chat functionality
+        let messageHistory = [];
+
+        function toggleChat() {
+            const container = document.getElementById('chatContainer');
+            const toggle = document.getElementById('chatToggle');
+            container.classList.toggle('minimized');
+            toggle.textContent = container.classList.contains('minimized') ? '+' : '−';
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            // Add user message to chat
+            addUserMessage(message);
+            input.value = '';
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            try {
+                // Send to backend
+                const response = await fetch('http://localhost:5000/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        sender: 'user_' + Date.now()
+                    })
+                });
+
+                const data = await response.json();
+
+                hideTypingIndicator();
+
+                if (data.success && data.responses) {
+                    data.responses.forEach(response => {
+                        if (response.text) {
+                            addBotMessage(response.text);
+                        }
+
+                        // Handle special actions
+                        if (response.custom) {
+                            handleCustomAction(response.custom);
+                        }
+                    });
+
+                    // If asking about nearest shelter and we have location
+                    if (message.toLowerCase().includes('nearest') && message.toLowerCase().includes('shelter') && userLocation) {
+                        findNearestShelter();
+                    }
+                } else {
+                    addBotMessage("I'm having trouble connecting. Please make sure the backend server is running.");
+                }
+            } catch (error) {
+                hideTypingIndicator();
+                console.error('Error:', error);
+                addBotMessage("❌ Connection error. Make sure the Flask backend is running on http://localhost:5000");
+            }
+        }
+
+        function addUserMessage(text) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user';
+            messageDiv.innerHTML = `<div class="message-content">${escapeHtml(text)}</div>`;
+            messagesDiv.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function addBotMessage(text) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot';
+            messageDiv.innerHTML = `<div class="message-content">${formatMessage(text)}</div>`;
+            messagesDiv.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'block';
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        function scrollToBottom() {
+            const messagesDiv = document.getElementById('chatMessages');
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatMessage(text) {
+            // Convert markdown-style formatting
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/\n/g, '<br>');
+            return text;
+        }
+
+        async function findNearestShelter() {
+            if (!userLocation) {
+                addBotMessage("📍 Please set your location first by clicking 'Get My Location' or clicking on the map.");
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/nearest-shelter', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        latitude: userLocation.lat,
+                        longitude: userLocation.lon,
+                        limit: 3
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.nearest_shelters && data.nearest_shelters.length > 0) {
+                    let message = "🏥 **Nearest Shelters:**\n\n";
+                    data.nearest_shelters.forEach((shelter, index) => {
+                        message += `**${index + 1}. ${shelter.name}**\n`;
+                        message += `   • Type: ${shelter.type}\n`;
+                        message += `   • Distance: ${shelter.distance_km} km (${shelter.distance_miles} miles)\n`;
+                        message += `   • Address: ${shelter.address}\n\n`;
+                    });
+                    addBotMessage(message);
+
+                    // Highlight nearest shelter on map
+                    const nearest = data.nearest_shelters[0];
+                    map.setView([nearest.latitude, nearest.longitude], 15);
+                } else {
+                    addBotMessage("No shelters found in the database. Please load shelter data first.");
+                }
+            } catch (error) {
+                console.error('Error finding nearest shelter:', error);
+                addBotMessage("Error finding nearest shelter. Please try again.");
+            }
+        }
+
+        function handleCustomAction(action) {
+            if (action.action === 'request_location' && !userLocation) {
+                setTimeout(() => getMyLocation(), 1000);
+            }
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            loadShelters();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - ask_shelter_location
+  - ask_nearest_shelter
+  - ask_first_aid
+  - provide_location
+  - thanks
+
+entities:
+  - latitude
+  - longitude
+  - injury_type
+  - location
+
+slots:
+  user_latitude:
+    type: float
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: latitude
+
+  user_longitude:
+    type: float
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: longitude
+
+  injury_type:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: injury_type
+
+responses:
+  utter_greet:
+    - text: "Hello! I'm here to help you during emergencies. I can help you find the nearest shelter or provide first aid information. How can I assist you?"
+
+  utter_goodbye:
+    - text: "Stay safe! Feel free to ask if you need more help."
+
+  utter_ask_location:
+    - text: "To find the nearest shelter, I'll need your current location. Please share your coordinates or allow location access on the map."
+
+  utter_you_are_welcome:
+    - text: "You're welcome! Stay safe."
+    - text: "Happy to help! Take care."
+
+  utter_default:
+    - text: "I'm sorry, I didn't understand that. I can help you with:\n- Finding the nearest shelter\n- Providing first aid information\n- Showing emergency locations on the map"
+
+actions:
+  - action_find_nearest_shelter
+  - action_provide_first_aid
