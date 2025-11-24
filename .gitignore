@@ -5,8 +5,9 @@
 *.xlsx
 *.xls
 
-# Generated HTML maps
-*.html
+# Generated HTML maps (exclude main app HTML)
+offline_map.html
+!map_with_chat.html
 offline_resources/
 
 # Python
