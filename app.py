@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
 Flask Backend for Emergency Shelter and Chatbot Application
-Integrates Rasa chatbot with shelter location services.
+Lightweight custom chatbot with shelter location services.
 """
 
 from flask import Flask, request, jsonify, render_template, send_file
 from flask_cors import CORS
-import requests
 import pandas as pd
 import os
 import math
@@ -17,7 +16,6 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
 # Configuration
-RASA_SERVER_URL = "http://localhost:5005"
 SHELTER_DATA_FILE = None  # Will be set dynamically
 
 
@@ -127,7 +125,7 @@ def index():
 @app.route('/chat', methods=['POST'])
 def chat():
     """
-    Handle chat messages and forward to Rasa.
+    Handle chat messages with custom lightweight NLP.
 
     Expected JSON: {"message": "user message", "sender": "user_id"}
     """
@@ -139,32 +137,18 @@ def chat():
         if not user_message:
             return jsonify({'error': 'No message provided'}), 400
 
-        # Forward to Rasa
-        rasa_url = f"{RASA_SERVER_URL}/webhooks/rest/webhook"
-        rasa_payload = {
-            'sender': sender,
-            'message': user_message
+        # TODO: Implement custom chatbot logic here
+        # This is a placeholder that will be replaced with the full chatbot
+
+        bot_response = {
+            'text': "Chatbot is being set up. Please wait for the full implementation."
         }
 
-        response = requests.post(rasa_url, json=rasa_payload)
-
-        if response.status_code == 200:
-            bot_responses = response.json()
-            return jsonify({
-                'success': True,
-                'responses': bot_responses
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'error': 'Rasa server error'
-            }), 500
-
-    except requests.exceptions.ConnectionError:
         return jsonify({
-            'success': False,
-            'error': 'Cannot connect to Rasa server. Make sure Rasa is running.'
-        }), 503
+            'success': True,
+            'responses': [bot_response]
+        })
+
     except Exception as e:
         return jsonify({
             'success': False,
@@ -264,8 +248,8 @@ def health_check():
     """Health check endpoint."""
     return jsonify({
         'status': 'ok',
-        'shelter_count': len(shelter_manager.shelters),
-        'rasa_url': RASA_SERVER_URL
+        'chatbot': 'custom_lightweight',
+        'shelter_count': len(shelter_manager.shelters)
     })
 
 
@@ -291,7 +275,7 @@ if __name__ == '__main__':
     print("Emergency Shelter Chatbot Backend")
     print("="*60)
     print(f"Flask server: http://localhost:5000")
-    print(f"Rasa server: {RASA_SERVER_URL}")
+    print(f"Chatbot: Custom Lightweight NLP")
     print(f"Shelters loaded: {len(shelter_manager.shelters)}")
     print("="*60 + "\n")
 
