@@ -39,20 +39,21 @@ FIRST_AID_DATA = {
     },
 
     "cpr": {
-        "title": "CPR Instructions (Adult)",
+        "title": "CPR Instructions (Adult) - India",
         "steps": [
             "1. Check responsiveness - tap shoulder and shout",
-            "2. Call emergency services (911/local emergency number)",
+            "2. Call 108 (Emergency Ambulance) or 102 immediately",
             "3. Place person on firm, flat surface",
             "4. Position hands: center of chest, between nipples",
-            "5. Compressions: Push hard and fast - at least 2 inches deep",
-            "6. Rate: 100-120 compressions per minute",
-            "7. After 30 compressions, give 2 rescue breaths",
+            "5. Compressions: Push hard and fast - at least 2 inches (5cm) deep",
+            "6. Rate: 100-120 compressions per minute (think: 'Stayin' Alive' song tempo)",
+            "7. After 30 compressions, give 2 rescue breaths (if trained)",
             "8. Continue until help arrives or person starts breathing"
         ],
         "warnings": [
-            "⚠️ If untrained, do hands-only CPR (skip rescue breaths)",
-            "⚠️ Don't stop CPR until professional help arrives"
+            "⚠️ If untrained, do hands-only CPR (skip rescue breaths) - compressions only!",
+            "⚠️ Don't stop CPR until professional help arrives or person revives",
+            "⚠️ Call 108 FIRST before starting CPR if alone"
         ]
     },
 
@@ -226,20 +227,30 @@ FIRST_AID_DATA = {
     },
 
     "snake_bite": {
-        "title": "Snake Bite Treatment",
+        "title": "Snake Bite Treatment (India)",
+        "indian_species": [
+            "Common venomous snakes in India:",
+            "• Cobra (Naja naja) - Black/brown with hood",
+            "• Common Krait (Bungarus caeruleus) - Black with white bands",
+            "• Russell's Viper (Daboia russelii) - Brown with chain-like pattern",
+            "• Saw-scaled Viper (Echis carinatus) - Small, brown/grey"
+        ],
         "steps": [
-            "1. Call emergency services immediately",
+            "1. Call 108 (Emergency Ambulance) or 102 immediately",
             "2. Keep person calm and still (movement spreads venom)",
             "3. Remove jewelry and tight clothing before swelling",
             "4. Position bite below heart level if possible",
             "5. Clean bite with soap and water",
             "6. Cover with clean, dry bandage",
-            "7. Try to remember snake's appearance for identification"
+            "7. Try to remember snake's appearance - color, size, pattern",
+            "8. Get to nearest hospital with anti-venom immediately"
         ],
         "warnings": [
             "⚠️ Don't apply ice or tourniquet",
             "⚠️ Don't cut the wound or try to suck out venom",
-            "⚠️ Don't give person alcohol or caffeine"
+            "⚠️ Don't give person alcohol or caffeine",
+            "⚠️ Don't rely on traditional remedies - get medical help IMMEDIATELY",
+            "⚠️ Most snake bites in India occur during monsoon in rural/mountain areas"
         ]
     },
 
@@ -282,6 +293,163 @@ FIRST_AID_DATA = {
             "⚠️ If you can't bear weight, see a doctor (may be fracture)",
             "⚠️ Severe sprains may require medical attention"
         ]
+    },
+
+    "flood_safety": {
+        "title": "Flood Safety & Survival (Mountain/Urban Areas)",
+        "before_flood": [
+            "**Before a Flood:**",
+            "• Move to higher ground immediately",
+            "• Avoid walking/driving through floodwater",
+            "• Disconnect electrical appliances",
+            "• Store drinking water in clean containers",
+            "• Keep emergency supplies: torch, first aid, food, phone charger"
+        ],
+        "during_flood": [
+            "**During a Flood:**",
+            "• Stay on higher floors, avoid basements",
+            "• Don't touch electrical equipment if you're wet",
+            "• 15cm (6 inches) of moving water can knock you down",
+            "• 60cm (2 feet) of water can float a car - NEVER drive through floods",
+            "• In mountains: Watch for landslides and debris flows",
+            "• Call 1078 (Disaster Management) or 100 (Police) for rescue"
+        ],
+        "after_flood": [
+            "**After a Flood:**",
+            "• Don't return home until authorities say it's safe",
+            "• Avoid floodwater - may contain sewage, chemicals, debris",
+            "• Check for structural damage before entering buildings",
+            "• Boil water for at least 10 minutes before drinking",
+            "• Watch for snakes and insects in debris"
+        ],
+        "warnings": [
+            "⚠️ Monsoon floods are common in mountain areas - be prepared",
+            "⚠️ Flash floods can occur within minutes in valleys",
+            "⚠️ Never camp in dry riverbeds during monsoon season"
+        ]
+    },
+
+    "flood_injuries": {
+        "title": "Flood-Related Injuries & Illnesses",
+        "hypothermia_from_water": [
+            "**Hypothermia from Cold Floodwater:**",
+            "• Remove wet clothing immediately",
+            "• Wrap in dry blankets or clothing",
+            "• Give warm (not hot) drinks if conscious",
+            "• Get medical help - call 108",
+            "• Mountain streams are especially cold - hypothermia risk is HIGH"
+        ],
+        "waterborne_diseases": [
+            "**Preventing Waterborne Diseases:**",
+            "• ALWAYS boil water for 10 minutes before drinking",
+            "• Avoid floodwater - contains sewage and bacteria",
+            "• Wash hands with soap before eating",
+            "• Common post-flood diseases: Cholera, Typhoid, Leptospirosis, Hepatitis A",
+            "• Symptoms: Diarrhea, vomiting, fever - seek medical help immediately"
+        ],
+        "debris_injuries": [
+            "**Injuries from Debris/Contaminated Water:**",
+            "• Clean all wounds immediately with clean water and soap",
+            "• Apply antiseptic if available",
+            "• Cover wounds with clean bandage",
+            "• Get tetanus shot if wound is deep or dirty",
+            "• Watch for signs of infection: redness, swelling, pus, fever"
+        ],
+        "warnings": [
+            "⚠️ Leptospirosis (from rat urine in floodwater) is common in India",
+            "⚠️ Symptoms: High fever, headache, muscle pain - get help within 48 hours",
+            "⚠️ Don't walk barefoot in floodwater"
+        ]
+    },
+
+    "mountain_emergencies": {
+        "title": "Mountain Emergency Information",
+        "altitude_sickness": [
+            "**Altitude Sickness (Above 2500m/8000ft):**",
+            "• Symptoms: Headache, nausea, dizziness, fatigue, shortness of breath",
+            "• TREATMENT: Descend immediately - even 500m helps",
+            "• Rest and hydrate with water",
+            "• Don't ascend until symptoms improve",
+            "• Severe cases (confusion, loss of coordination): EMERGENCY - descend NOW"
+        ],
+        "landslide_safety": [
+            "**Landslide Safety:**",
+            "• Warning signs: Cracks in ground, tilting trees/poles, unusual sounds",
+            "• If caught in landslide: Move perpendicular to its path (sideways)",
+            "• Curl into tight ball, protect head if you can't escape",
+            "• After: Don't return to area - afterslides are common",
+            "• Report to authorities: 1078 (Disaster Management)"
+        ],
+        "lost_stranded": [
+            "**If Lost/Stranded in Mountains:**",
+            "• STAY PUT if you're lost - don't wander",
+            "• Find shelter from wind and rain",
+            "• Make yourself visible - bright clothing, signal mirror",
+            "• Three of anything is international distress signal (3 fires, 3 whistle blasts)",
+            "• Conserve phone battery - make one call to 100 or 1078",
+            "• In Himalayas/Northeast: Nights are COLD - find shelter first"
+        ],
+        "warnings": [
+            "⚠️ Mountain weather changes rapidly - always carry warm/waterproof gear",
+            "⚠️ Inform someone of your route and expected return time",
+            "⚠️ Monsoon season (June-Sept): High risk of landslides and flash floods"
+        ]
+    },
+
+    "indian_emergency_numbers": {
+        "title": "Emergency Contact Numbers (India)",
+        "numbers": [
+            "**Emergency Services:**",
+            "📞 100 - Police",
+            "📞 101 - Fire Services",
+            "📞 102 - Ambulance",
+            "📞 108 - Emergency Ambulance Service (Free, available in most states)",
+            "📞 112 - Single Emergency Helpline (New, works in many states)",
+            "",
+            "**Disaster & Specialized Services:**",
+            "📞 1078 - Disaster Management Services",
+            "📞 1070 - Women Helpline",
+            "📞 1091 - Women in Distress",
+            "📞 104 - National Health Helpline",
+            "",
+            "**State Disaster Helplines (Examples):**",
+            "• Uttarakhand: 1070, 0135-2710334",
+            "• Himachal Pradesh: 1077, 0177-2653343",
+            "• Kerala: 1077",
+            "• Karnataka: 080-22340676",
+            "",
+            "**Important Contacts:**",
+            "• Indian Meteorological Department (IMD): Weather warnings",
+            "• National Disaster Response Force (NDRF): 011-24363260"
+        ],
+        "warnings": [
+            "⚠️ Save these numbers in your phone BEFORE emergencies",
+            "⚠️ 108 is toll-free and available 24/7 in most areas",
+            "⚠️ In remote mountains, mobile coverage may be limited - satellite phones recommended"
+        ]
+    },
+
+    "traditional_medicine_warning": {
+        "title": "Important: Medical Treatment Advice",
+        "message": [
+            "⚠️ **CRITICAL INFORMATION:**",
+            "",
+            "This app provides SCIENCE-BASED first aid information only.",
+            "",
+            "**DO NOT rely on traditional remedies for emergencies:**",
+            "• Snake bites: Only anti-venom works - traditional methods are DANGEROUS",
+            "• Serious injuries: Need proper medical care, not home remedies",
+            "• Infections: Require antibiotics, not herbal treatments",
+            "",
+            "**Traditional remedies should NEVER replace:**",
+            "• Calling emergency services (100, 108, 102)",
+            "• Getting to a hospital",
+            "• Professional medical treatment",
+            "",
+            "**When in doubt: Call 108 or get to nearest hospital immediately.**",
+            "",
+            "Your life is more important than waiting for traditional treatments to work."
+        ]
     }
 }
 
@@ -312,9 +480,14 @@ def get_first_aid_info(query: str) -> dict:
         "heart_attack": ["heart attack", "chest pain", "cardiac arrest"],
         "stroke": ["stroke", "face drooping", "arm weakness"],
         "poisoning": ["poison", "poisoning", "toxic", "ingested"],
-        "snake_bite": ["snake", "bite", "venomous"],
+        "snake_bite": ["snake", "bite", "venomous", "cobra", "krait", "viper"],
         "allergic_reaction": ["allergy", "allergic", "anaphylaxis", "epipen"],
-        "sprain": ["sprain", "twisted", "ankle", "wrist"]
+        "sprain": ["sprain", "twisted", "ankle", "wrist"],
+        "flood_safety": ["flood", "flooding", "water rising", "flash flood", "monsoon flood"],
+        "flood_injuries": ["waterborne", "leptospirosis", "contaminated water", "flood injury", "debris injury"],
+        "mountain_emergencies": ["altitude", "landslide", "lost in mountain", "stranded", "mountain emergency"],
+        "indian_emergency_numbers": ["emergency number", "helpline", "police number", "ambulance number", "who to call"],
+        "traditional_medicine_warning": ["traditional", "home remedy", "ayurvedic emergency"]
     }
 
     # Find matching condition
@@ -325,6 +498,14 @@ def get_first_aid_info(query: str) -> dict:
                 "info": FIRST_AID_DATA[condition],
                 "found": True
             }
+
+    # Check if direct query matches a condition name
+    if query_lower in FIRST_AID_DATA:
+        return {
+            "condition": query_lower,
+            "info": FIRST_AID_DATA[query_lower],
+            "found": True
+        }
 
     # No specific match found
     return {
@@ -344,7 +525,10 @@ def get_first_aid_info(query: str) -> dict:
                   "• Poisoning\n" +
                   "• Snake bites\n" +
                   "• Allergic reactions\n" +
-                  "• Sprains\n\n" +
+                  "• Sprains\n" +
+                  "• Flood safety\n" +
+                  "• Mountain emergencies\n" +
+                  "• Emergency numbers\n\n" +
                   "Please specify what kind of first aid help you need."
     }
 
@@ -365,11 +549,77 @@ def format_first_aid_response(info_dict: dict) -> str:
     info = info_dict["info"]
     response = f"🏥 **{info['title']}**\n\n"
 
+    # Add indian_species if present (for snake bites)
+    if "indian_species" in info:
+        for line in info["indian_species"]:
+            response += f"{line}\n"
+        response += "\n"
+
     # Add symptoms if present
     if "symptoms" in info:
         response += "**Symptoms:**\n"
         for symptom in info["symptoms"]:
             response += f"{symptom}\n"
+        response += "\n"
+
+    # Add numbers if present (for emergency numbers)
+    if "numbers" in info:
+        for line in info["numbers"]:
+            response += f"{line}\n"
+        response += "\n"
+
+    # Add message if present (for warnings)
+    if "message" in info:
+        for line in info["message"]:
+            response += f"{line}\n"
+        response += "\n"
+
+    # Add flood safety stages
+    if "before_flood" in info:
+        for line in info["before_flood"]:
+            response += f"{line}\n"
+        response += "\n"
+
+    if "during_flood" in info:
+        for line in info["during_flood"]:
+            response += f"{line}\n"
+        response += "\n"
+
+    if "after_flood" in info:
+        for line in info["after_flood"]:
+            response += f"{line}\n"
+        response += "\n"
+
+    # Add flood injury info
+    if "hypothermia_from_water" in info:
+        for line in info["hypothermia_from_water"]:
+            response += f"{line}\n"
+        response += "\n"
+
+    if "waterborne_diseases" in info:
+        for line in info["waterborne_diseases"]:
+            response += f"{line}\n"
+        response += "\n"
+
+    if "debris_injuries" in info:
+        for line in info["debris_injuries"]:
+            response += f"{line}\n"
+        response += "\n"
+
+    # Add mountain emergency info
+    if "altitude_sickness" in info:
+        for line in info["altitude_sickness"]:
+            response += f"{line}\n"
+        response += "\n"
+
+    if "landslide_safety" in info:
+        for line in info["landslide_safety"]:
+            response += f"{line}\n"
+        response += "\n"
+
+    if "lost_stranded" in info:
+        for line in info["lost_stranded"]:
+            response += f"{line}\n"
         response += "\n"
 
     # Add steps

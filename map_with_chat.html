@@ -533,16 +533,26 @@
             showTypingIndicator();
 
             try {
-                // Send to backend
+                // Send to backend with location if available
+                const requestBody = {
+                    message: message,
+                    sender: 'user_' + Date.now()
+                };
+
+                // Include location if available
+                if (userLocation) {
+                    requestBody.location = {
+                        latitude: userLocation.lat,
+                        longitude: userLocation.lon
+                    };
+                }
+
                 const response = await fetch('http://localhost:5000/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        message: message,
-                        sender: 'user_' + Date.now()
-                    })
+                    body: JSON.stringify(requestBody)
                 });
 
                 const data = await response.json();
