@@ -273,7 +273,7 @@ if __name__ == '__main__':
     print("\n" + "="*60)
     print("Emergency Shelter Chatbot Backend")
     print("="*60)
-    print(f"Flask server: http://localhost:5000")
+    print(f"Flask server: http://localhost:8080")
     print(f"Chatbot: Custom Lightweight NLP")
     print(f"Shelters loaded: {len(shelter_manager.shelters)}")
     print("="*60 + "\n")

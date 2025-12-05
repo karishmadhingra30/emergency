@@ -411,7 +411,7 @@
         // Load shelters from backend
         async function loadShelters() {
             try {
-                const response = await fetch('http://localhost:5000/shelters');
+                const response = await fetch('http://localhost:8080/shelters');
                 const data = await response.json();
 
                 if (data.success && data.shelters) {
@@ -547,7 +547,7 @@
                     };
                 }
 
-                const response = await fetch('http://localhost:5000/chat', {
+                const response = await fetch('http://localhost:8080/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -581,7 +581,7 @@
             } catch (error) {
                 hideTypingIndicator();
                 console.error('Error:', error);
-                addBotMessage("❌ Connection error. Make sure the Flask backend is running on http://localhost:5000");
+                addBotMessage("❌ Connection error. Make sure the Flask backend is running on http://localhost:8080");
             }
         }
 
@@ -637,7 +637,7 @@
             }
 
             try {
-                const response = await fetch('http://localhost:5000/nearest-shelter', {
+                const response = await fetch('http://localhost:8080/nearest-shelter', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
