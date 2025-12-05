@@ -6,6 +6,13 @@ A comprehensive Python-based toolkit for emergency shelter management:
 
 ## Features
 
+### Emergency Chatbot (NEW - Gemma 3 via Ollama)
+- **AI-powered crisis assistance** using Gemma 3 model
+- **Offline-capable** emergency first-aid guidance
+- **Context-aware responses** with knowledge retrieval from first aid database
+- **India-specific** emergency numbers and mountain/flood safety information
+- **Interactive web interface** with map integration
+
 ### Shelter Locator
 - Fetches locations of potential emergency shelters:
   - Schools
@@ -29,6 +36,7 @@ A comprehensive Python-based toolkit for emergency shelter management:
 
 - Python 3.7 or higher
 - Google Maps API Key with Places API enabled
+- **Ollama** (for chatbot functionality) - see Chatbot Setup below
 
 ## Getting a Google Maps API Key
 
@@ -133,6 +141,129 @@ python offline_map_plotter.py data.xlsx --sheet "All Shelters" --title "Emergenc
 - Creates an HTML file with an interactive map
 - Open the HTML file in any web browser (Chrome, Firefox, Safari, etc.)
 - Works offline after initial tile load (tiles are cached by browser)
+
+### Emergency Chatbot (Gemma 3 via Ollama)
+
+The chatbot provides AI-powered emergency assistance with first-aid guidance, shelter location, and crisis management information.
+
+#### Chatbot Setup
+
+**1. Install Ollama:**
+
+For Linux:
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+For macOS:
+```bash
+brew install ollama
+```
+
+For Windows:
+Download and install from [ollama.com/download](https://ollama.com/download)
+
+**2. Install Gemma 3 Model:**
+
+After installing Ollama, pull the Gemma model:
+```bash
+ollama pull gemma2:2b
+```
+
+This downloads the Gemma 2 2B model (recommended for efficiency). For better quality responses, you can use larger models:
+```bash
+# Alternative: Larger model with better quality
+ollama pull gemma2:9b
+```
+
+**3. Verify Installation:**
+
+Test that Ollama is working:
+```bash
+ollama list  # Should show gemma2:2b in the list
+```
+
+**4. Start Ollama Service:**
+
+Ollama needs to be running as a service:
+```bash
+# On Linux/macOS
+ollama serve
+
+# Or on systemd-based Linux systems, it should start automatically
+```
+
+#### Running the Chatbot Backend
+
+Start the Flask backend server:
+```bash
+python app.py
+```
+
+The server will start on `http://localhost:8080` and display:
+```
+============================================================
+Emergency Shelter Chatbot Backend
+============================================================
+Flask server: http://localhost:8080
+Chatbot: Gemma 3 via Ollama
+Shelters loaded: <number>
+============================================================
+```
+
+#### Using the Chatbot
+
+1. Open your browser and go to `http://localhost:8080`
+2. The interactive map with chat interface will load
+3. Click "Get My Location" or click on the map to set your location
+4. Type your emergency question in the chat box
+
+**Example queries:**
+- "What should I do for severe bleeding?"
+- "Snake bite treatment"
+- "What to do in a flood?"
+- "Find nearest shelter"
+- "Emergency numbers in India"
+- "Altitude sickness symptoms"
+
+#### Chatbot Features
+
+- **Knowledge Retrieval**: Automatically retrieves relevant first-aid information from the knowledge base
+- **Context-Aware**: Uses your location to provide relevant shelter information
+- **India-Specific**: Includes Indian emergency numbers (108, 100, 1078) and local emergency protocols
+- **First-Aid Coverage**: CPR, bleeding, burns, fractures, snake bites, flood safety, mountain emergencies, and more
+- **Offline-Capable**: Once Gemma model is downloaded, works without internet (except for map tiles)
+
+#### Customizing the Model
+
+To use a different Gemma model, edit `gemma_chat.py`:
+```python
+# Default model
+gemma_chat(user_message, model_name="gemma2:2b")
+
+# Use larger model for better responses
+gemma_chat(user_message, model_name="gemma2:9b")
+```
+
+#### Troubleshooting Chatbot
+
+**Ollama Connection Error:**
+- Ensure Ollama service is running: `ollama serve`
+- Check if the model is installed: `ollama list`
+- Verify the service is accessible: `curl http://localhost:11434`
+
+**Model Not Found:**
+- Pull the model: `ollama pull gemma2:2b`
+- Check available models: `ollama list`
+
+**Slow Responses:**
+- The 2B model should be fast on most modern hardware
+- If too slow, ensure you have enough RAM (at least 4GB free)
+- Consider using a smaller model or upgrading hardware
+
+**Fallback Behavior:**
+- If Ollama is unavailable, the chatbot will return the raw knowledge base information
+- Emergency numbers and critical info are always accessible
 
 ## Output Format
 

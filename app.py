@@ -11,7 +11,7 @@ import os
 import math
 from typing import List, Dict, Optional
 import json
-from chatbot import process_message
+from gemma_chat import gemma_chat
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -139,8 +139,8 @@ def chat():
         if not user_message:
             return jsonify({'error': 'No message provided'}), 400
 
-        # Process message through chatbot
-        bot_responses = process_message(user_message, user_location)
+        # Process message through Gemma chatbot
+        bot_responses = gemma_chat(user_message, user_location)
 
         return jsonify({
             'success': True,
@@ -247,7 +247,7 @@ def health_check():
     """Health check endpoint."""
     return jsonify({
         'status': 'ok',
-        'chatbot': 'custom_lightweight',
+        'chatbot': 'gemma3_via_ollama',
         'shelter_count': len(shelter_manager.shelters)
     })
 
@@ -274,7 +274,7 @@ if __name__ == '__main__':
     print("Emergency Shelter Chatbot Backend")
     print("="*60)
     print(f"Flask server: http://localhost:8080")
-    print(f"Chatbot: Custom Lightweight NLP")
+    print(f"Chatbot: Gemma 3 via Ollama")
     print(f"Shelters loaded: {len(shelter_manager.shelters)}")
     print("="*60 + "\n")
 
