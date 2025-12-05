@@ -278,4 +278,4 @@ if __name__ == '__main__':
     print(f"Shelters loaded: {len(shelter_manager.shelters)}")
     print("="*60 + "\n")
 
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True)
