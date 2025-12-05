@@ -11,6 +11,7 @@ import os
 import math
 from typing import List, Dict, Optional
 import json
+from chatbot import process_message
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -127,29 +128,27 @@ def chat():
     """
     Handle chat messages with custom lightweight NLP.
 
-    Expected JSON: {"message": "user message", "sender": "user_id"}
+    Expected JSON: {"message": "user message", "sender": "user_id", "location": {"latitude": float, "longitude": float} (optional)}
     """
     try:
         data = request.json
         user_message = data.get('message', '')
         sender = data.get('sender', 'user')
+        user_location = data.get('location')  # Optional: {"latitude": float, "longitude": float}
 
         if not user_message:
             return jsonify({'error': 'No message provided'}), 400
 
-        # TODO: Implement custom chatbot logic here
-        # This is a placeholder that will be replaced with the full chatbot
-
-        bot_response = {
-            'text': "Chatbot is being set up. Please wait for the full implementation."
-        }
+        # Process message through chatbot
+        bot_responses = process_message(user_message, user_location)
 
         return jsonify({
             'success': True,
-            'responses': [bot_response]
+            'responses': bot_responses
         })
 
     except Exception as e:
+        print(f"Error in chat endpoint: {e}")
         return jsonify({
             'success': False,
             'error': str(e)
