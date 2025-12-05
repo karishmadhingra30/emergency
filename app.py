@@ -119,7 +119,13 @@ shelter_manager = ShelterManager()
 
 @app.route('/')
 def index():
-    """Serve the main map page with chatbot."""
+    """Serve the landing page."""
+    return send_file('index.html')
+
+
+@app.route('/map')
+def map_page():
+    """Serve the map page with chatbot."""
     return send_file('map_with_chat.html')
 
 
