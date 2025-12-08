@@ -213,34 +213,7 @@
             cursor: not-allowed;
         }
 
-        /* Location Controls */
-        .location-controls {
-            position: absolute;
-            top: 90px;
-            left: 10px;
-            z-index: 1000;
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-
-        .location-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-bottom: 5px;
-            width: 100%;
-            transition: transform 0.2s;
-        }
-
-        .location-button:hover {
-            transform: scale(1.05);
-        }
+        /* Location Controls - REMOVED */
 
         /* Legend */
         .legend {
@@ -332,11 +305,6 @@
 
     <div id="map"></div>
 
-    <div class="location-controls">
-        <button class="location-button" onclick="getMyLocation()">📍 Get My Location</button>
-        <p style="font-size: 12px; margin-top: 10px; color: #666;">Or click on the map to set location</p>
-    </div>
-
     <div class="legend">
         <h4>Map Legend</h4>
         <div class="legend-item">
@@ -365,11 +333,11 @@
         <div class="chat-messages" id="chatMessages">
             <div class="message bot">
                 <div class="message-content">
-                    Hello! I'm your emergency assistant. I can help you:<br><br>
-                    • Find the nearest shelter<br>
-                    • Provide first aid information<br>
-                    • Show emergency locations on the map<br><br>
-                    How can I help you today?
+                    Hello! I'm your emergency assistant.<br><br>
+                    To get started, please provide your location coordinates in this format:<br>
+                    <strong>Latitude, Longitude</strong><br><br>
+                    Example: 30.324329, 78.0418<br><br>
+                    Once I have your location, I can help you find the nearest shelters and provide first aid information.
                 </div>
             </div>
             <div class="typing-indicator" id="typingIndicator">
@@ -387,8 +355,8 @@
     </div>
 
     <script>
-        // Initialize map
-        const map = L.map('map').setView([40.7128, -74.0060], 13);
+        // Initialize map - centered on specified coordinates (Dehradun area)
+        const map = L.map('map').setView([30.324329, 78.0418], 13);
 
         // Add tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -450,24 +418,19 @@
             shelterMarkers.push(marker);
         }
 
-        // Get user's location
-        function getMyLocation() {
-            if (navigator.geolocation) {
-                addBotMessage("🔍 Getting your location...");
-                navigator.geolocation.getCurrentPosition(
-                    position => {
-                        const lat = position.coords.latitude;
-                        const lon = position.coords.longitude;
-                        setUserLocation(lat, lon);
-                        addBotMessage(`✓ Location found: ${lat.toFixed(4)}, ${lon.toFixed(4)}`);
-                    },
-                    error => {
-                        addBotMessage("❌ Could not get your location. Please click on the map or grant location permission.");
-                    }
-                );
-            } else {
-                addBotMessage("❌ Geolocation is not supported by your browser. Please click on the map to set your location.");
+        // Parse coordinates from user input
+        function parseCoordinates(message) {
+            // Try to parse latitude and longitude from the message
+            // Supports formats like: "30.324329, 78.0418" or "30.324329 78.0418" or "lat: 30.324329, lon: 78.0418"
+            const coordPattern = /(?:lat.*?)?(-?\d+\.?\d*)[,\s]+(?:lon.*?)?(-?\d+\.?\d*)/i;
+            const match = message.match(coordPattern);
+            if (match) {
+                return {
+                    lat: parseFloat(match[1]),
+                    lon: parseFloat(match[2])
+                };
             }
+            return null;
         }
 
         // Set user location on map
@@ -497,11 +460,7 @@
             map.setView([lat, lon], 13);
         }
 
-        // Click on map to set location
-        map.on('click', function(e) {
-            setUserLocation(e.latlng.lat, e.latlng.lng);
-            addBotMessage(`📍 Location set to: ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`);
-        });
+        // Map click disabled - location set through chatbot only
 
         // Chat functionality
         let messageHistory = [];
@@ -529,6 +488,14 @@
             addUserMessage(message);
             input.value = '';
 
+            // Check if user is providing coordinates
+            const coords = parseCoordinates(message);
+            if (coords && !userLocation) {
+                setUserLocation(coords.lat, coords.lon);
+                addBotMessage(`✓ Location set to: ${coords.lat.toFixed(6)}, ${coords.lon.toFixed(6)}<br><br>Great! Now I can help you find the nearest shelters. Just ask me "What are the nearest shelters?" or ask about first aid information.`);
+                return;
+            }
+
             // Show typing indicator
             showTypingIndicator();
 
@@ -544,6 +511,12 @@
                     requestBody.location = {
                         latitude: userLocation.lat,
                         longitude: userLocation.lon
+                    };
+                } else if (coords) {
+                    // If coordinates were just parsed, use them
+                    requestBody.location = {
+                        latitude: coords.lat,
+                        longitude: coords.lon
                     };
                 }
 
@@ -632,7 +605,7 @@
 
         async function findNearestShelter() {
             if (!userLocation) {
-                addBotMessage("📍 Please set your location first by clicking 'Get My Location' or clicking on the map.");
+                addBotMessage("📍 Please provide your location coordinates first. Format: Latitude, Longitude (e.g., 30.324329, 78.0418)");
                 return;
             }
 
@@ -674,9 +647,7 @@
         }
 
         function handleCustomAction(action) {
-            if (action.action === 'request_location' && !userLocation) {
-                setTimeout(() => getMyLocation(), 1000);
-            }
+            // Custom action handler - can be extended as needed
         }
 
         // Initialize
