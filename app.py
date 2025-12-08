@@ -260,9 +260,9 @@ def health_check():
 
 def find_latest_shelter_file():
     """Find the most recent shelter Excel file."""
-    # First check for shelters_01.xlsx
-    if os.path.exists('shelters_01.xlsx'):
-        return 'shelters_01.xlsx'
+    # First check for shelters_downloaded.xlsx
+    if os.path.exists('shelters_downloaded.xlsx'):
+        return 'shelters_downloaded.xlsx'
     # Otherwise find the most recent shelter file
     files = [f for f in os.listdir('.') if f.startswith('shelters_') and f.endswith('.xlsx')]
     if files:

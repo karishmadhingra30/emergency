@@ -14,7 +14,7 @@ python3 app.py
 
 This will:
 - Start the server on `http://localhost:5000`
-- Auto-load sample shelter data for Uttarakhand region
+- Auto-load shelter data from shelters_downloaded.xlsx
 - Initialize the chatbot
 
 ### 2. Open the Application
@@ -139,15 +139,11 @@ The chatbot will:
 - 🟢 **Green Markers** = Fire Stations
 - 🟠 **Orange Marker** = Your Location
 
-## 🔧 Sample Data
+## 🔧 Shelter Data
 
-The app includes sample shelter data for Uttarakhand:
-- **Dehradun** area (5 shelters)
-- **Mussoorie** (2 shelters)
-- **Rishikesh** (2 shelters)
-- **Haridwar** (2 shelters)
+The app loads shelter data from `shelters_downloaded.xlsx`, which contains real shelter locations including schools, police stations, and fire stations in the region.
 
-### Adding Real Shelter Data
+### Adding More Shelter Data
 
 To fetch real data from Google Maps API:
 
@@ -267,7 +263,7 @@ The UI automatically adjusts for mobile devices:
 - Verify chatbot.py is imported correctly
 
 **Shelters not showing?**
-- Run `python3 create_india_sample_shelters.py`
+- Verify `shelters_downloaded.xlsx` exists in the project directory
 - Restart Flask server
 - Check console for "Loaded X shelters" message
 
