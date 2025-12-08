@@ -211,6 +211,45 @@ def gemma_chat(user_message: str, user_location: Optional[Dict] = None,
     Returns:
         List of response dictionaries (for compatibility with existing interface)
     """
+    # Check if user is asking for nearest shelters
+    message_lower = user_message.lower()
+    shelter_keywords = ['nearest shelter', 'find shelter', 'closest shelter', 'shelter near',
+                       'where is shelter', 'emergency shelter', 'shelters nearby']
+
+    if any(keyword in message_lower for keyword in shelter_keywords):
+        if not user_location:
+            return [{"text": "📍 To find the nearest shelters, I need your location coordinates. Please provide them in the format: Latitude, Longitude (e.g., 30.324329, 78.0418)"}]
+
+        # Import here to avoid circular dependency
+        from app import shelter_manager
+
+        # Find nearest shelters
+        nearest_shelters = shelter_manager.find_nearest_shelters(
+            user_location.get('latitude'),
+            user_location.get('longitude'),
+            limit=5
+        )
+
+        if not nearest_shelters:
+            return [{"text": "I couldn't find any shelters in the database. Please contact emergency services at 108 (India Emergency Number)."}]
+
+        # Format response
+        response = "🏥 **Nearest Shelters** (ordered by distance):\n\n"
+        for idx, shelter in enumerate(nearest_shelters, 1):
+            response += f"**{idx}. {shelter['name']}**\n"
+            response += f"   📍 Distance: {shelter['distance_km']} km ({shelter['distance_miles']} miles)\n"
+            response += f"   🏢 Type: {shelter['type'].replace('_', ' ').title()}\n"
+            response += f"   📮 Address: {shelter['address']}\n"
+            response += f"   📊 Status: {shelter['operational_status']}\n\n"
+
+        response += "**Important Emergency Numbers (India):**\n"
+        response += "📞 108 - Emergency Ambulance (Free)\n"
+        response += "📞 100 - Police\n"
+        response += "📞 1078 - Disaster Management"
+
+        return [{"text": response}]
+
+    # For non-shelter queries, use Gemma chatbot
     chatbot = get_gemma_chat(model_name)
     response_text = chatbot.chat(user_message, user_location)
 
