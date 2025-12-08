@@ -91,26 +91,38 @@ class ShelterManager:
         Returns:
             List of nearest shelters with distance information
         """
+        print(f"[DEBUG] ShelterManager.find_nearest_shelters - user_lat={user_lat}, user_lon={user_lon}, limit={limit}")
+        print(f"[DEBUG] ShelterManager.find_nearest_shelters - Total shelters in database: {len(self.shelters)}")
+
         if not self.shelters:
+            print("[ERROR] ShelterManager.find_nearest_shelters - No shelters loaded!")
             return []
 
         # Calculate distances
         shelters_with_distance = []
-        for shelter in self.shelters:
-            distance = self.calculate_distance(
-                user_lat, user_lon,
-                shelter['latitude'], shelter['longitude']
-            )
-            shelter_copy = shelter.copy()
-            shelter_copy['distance_km'] = round(distance, 2)
-            shelter_copy['distance_miles'] = round(distance * 0.621371, 2)
-            shelters_with_distance.append(shelter_copy)
+        for i, shelter in enumerate(self.shelters):
+            try:
+                distance = self.calculate_distance(
+                    user_lat, user_lon,
+                    shelter['latitude'], shelter['longitude']
+                )
+                shelter_copy = shelter.copy()
+                shelter_copy['distance_km'] = round(distance, 2)
+                shelter_copy['distance_miles'] = round(distance * 0.621371, 2)
+                shelters_with_distance.append(shelter_copy)
+            except Exception as e:
+                print(f"[ERROR] ShelterManager.find_nearest_shelters - Error calculating distance for shelter {i} ({shelter.get('name', 'Unknown')}): {e}")
+                continue
+
+        print(f"[DEBUG] ShelterManager.find_nearest_shelters - Calculated distances for {len(shelters_with_distance)} shelters")
 
         # Sort by distance
         shelters_with_distance.sort(key=lambda x: x['distance_km'])
 
         # Return top N
-        return shelters_with_distance[:limit]
+        result = shelters_with_distance[:limit]
+        print(f"[DEBUG] ShelterManager.find_nearest_shelters - Returning {len(result)} nearest shelters")
+        return result
 
 
 # Initialize shelter manager
@@ -198,15 +210,21 @@ def nearest_shelter():
         user_lon = data.get('longitude')
         limit = data.get('limit', 5)
 
+        print(f"[DEBUG] /nearest-shelter - Received request: lat={user_lat}, lon={user_lon}, limit={limit}")
+        print(f"[DEBUG] /nearest-shelter - shelter_manager has {len(shelter_manager.shelters)} shelters loaded")
+
         if user_lat is None or user_lon is None:
+            print(f"[ERROR] /nearest-shelter - Missing coordinates: lat={user_lat}, lon={user_lon}")
             return jsonify({'error': 'Latitude and longitude required'}), 400
 
+        # Convert to float
+        user_lat = float(user_lat)
+        user_lon = float(user_lon)
+
         # Find nearest shelters
-        nearest = shelter_manager.find_nearest_shelters(
-            float(user_lat),
-            float(user_lon),
-            limit
-        )
+        nearest = shelter_manager.find_nearest_shelters(user_lat, user_lon, limit)
+
+        print(f"[DEBUG] /nearest-shelter - Found {len(nearest)} nearest shelters")
 
         if not nearest:
             return jsonify({
@@ -224,6 +242,9 @@ def nearest_shelter():
         })
 
     except Exception as e:
+        print(f"[ERROR] /nearest-shelter - Exception occurred: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({
             'success': False,
             'error': str(e)
