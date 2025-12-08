@@ -223,31 +223,51 @@ def gemma_chat(user_message: str, user_location: Optional[Dict] = None,
         # Import here to avoid circular dependency
         from app import shelter_manager
 
-        # Find nearest shelters
-        nearest_shelters = shelter_manager.find_nearest_shelters(
-            user_location.get('latitude'),
-            user_location.get('longitude'),
-            limit=5
-        )
+        try:
+            # Validate location data
+            lat = user_location.get('latitude')
+            lon = user_location.get('longitude')
 
-        if not nearest_shelters:
-            return [{"text": "I couldn't find any shelters in the database. Please contact emergency services at 108 (India Emergency Number)."}]
+            print(f"[DEBUG] gemma_chat - Looking up shelters for location: lat={lat}, lon={lon}")
+            print(f"[DEBUG] gemma_chat - shelter_manager has {len(shelter_manager.shelters)} shelters loaded")
 
-        # Format response
-        response = "🏥 **Nearest Shelters** (ordered by distance):\n\n"
-        for idx, shelter in enumerate(nearest_shelters, 1):
-            response += f"**{idx}. {shelter['name']}**\n"
-            response += f"   📍 Distance: {shelter['distance_km']} km ({shelter['distance_miles']} miles)\n"
-            response += f"   🏢 Type: {shelter['type'].replace('_', ' ').title()}\n"
-            response += f"   📮 Address: {shelter['address']}\n"
-            response += f"   📊 Status: {shelter['operational_status']}\n\n"
+            if lat is None or lon is None:
+                print(f"[ERROR] gemma_chat - Missing coordinates: lat={lat}, lon={lon}")
+                return [{"text": "📍 Location data is incomplete. Please provide valid coordinates."}]
 
-        response += "**Important Emergency Numbers (India):**\n"
-        response += "📞 108 - Emergency Ambulance (Free)\n"
-        response += "📞 100 - Police\n"
-        response += "📞 1078 - Disaster Management"
+            # Convert to float to ensure proper types
+            lat = float(lat)
+            lon = float(lon)
 
-        return [{"text": response}]
+            # Find nearest shelters
+            nearest_shelters = shelter_manager.find_nearest_shelters(lat, lon, limit=5)
+
+            print(f"[DEBUG] gemma_chat - Found {len(nearest_shelters)} nearest shelters")
+
+            if not nearest_shelters:
+                return [{"text": "I couldn't find any shelters in the database. Please contact emergency services at 108 (India Emergency Number)."}]
+
+            # Format response
+            response = "🏥 **Nearest Shelters** (ordered by distance):\n\n"
+            for idx, shelter in enumerate(nearest_shelters, 1):
+                response += f"**{idx}. {shelter['name']}**\n"
+                response += f"   📍 Distance: {shelter['distance_km']} km ({shelter['distance_miles']} miles)\n"
+                response += f"   🏢 Type: {shelter['type'].replace('_', ' ').title()}\n"
+                response += f"   📮 Address: {shelter['address']}\n"
+                response += f"   📊 Status: {shelter['operational_status']}\n\n"
+
+            response += "**Important Emergency Numbers (India):**\n"
+            response += "📞 108 - Emergency Ambulance (Free)\n"
+            response += "📞 100 - Police\n"
+            response += "📞 1078 - Disaster Management"
+
+            return [{"text": response}]
+
+        except Exception as e:
+            print(f"[ERROR] gemma_chat - Error finding shelters: {e}")
+            import traceback
+            traceback.print_exc()
+            return [{"text": f"Error finding shelters: {str(e)}. Please contact emergency services at 108 (India Emergency Number)."}]
 
     # For non-shelter queries, use Gemma chatbot
     chatbot = get_gemma_chat(model_name)
