@@ -458,11 +458,11 @@
 
     <div id="map"></div>
 
-    <!-- SOS Emergency Button -->
-    <a href="tel:911" class="sos-floating" onclick="return confirm('Call 911 Emergency Services now?')">
-        <div class="emoji">🚨</div>
-        <div class="text">SOS</div>
-    </a>
+    <!-- Quick Help Button -->
+    <button class="sos-floating" onclick="showQuickHelp()">
+        <div class="emoji">ℹ️</div>
+        <div class="text">INFO</div>
+    </button>
 
     <div class="location-controls">
         <button class="location-button" onclick="getMyLocation()">📍 Get My Location</button>
@@ -634,6 +634,23 @@
             const toggle = document.getElementById('chatToggle');
             container.classList.toggle('minimized');
             toggle.textContent = container.classList.contains('minimized') ? '+' : '−';
+        }
+
+        function showQuickHelp() {
+            const helpInfo =
+                "📋 EMERGENCY INFORMATION\n\n" +
+                "Available Features:\n" +
+                "• First Aid Chat - Get step-by-step medical guidance\n" +
+                "• Find Shelters - Locate nearest safe places on map\n" +
+                "• Offline Access - All features work without internet\n\n" +
+                "How to Use:\n" +
+                "1. Click 'Get My Location' or tap the map\n" +
+                "2. Use chat for first aid instructions\n" +
+                "3. View nearby shelters with distances\n\n" +
+                "⚠️ For life-threatening emergencies,\n" +
+                "seek professional medical help immediately.";
+
+            alert(helpInfo);
         }
 
         function handleKeyPress(event) {
