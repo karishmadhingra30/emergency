@@ -53,17 +53,16 @@ class GemmaEmergencyChat:
 
 **Your Role:**
 - Provide immediate, actionable first-aid guidance
-- Emphasize calling emergency services (108, 100, 1078) for serious situations
 - Give clear, step-by-step instructions
 - Be concise but thorough
-- Adapt to India-specific context (monsoon floods, mountain terrain, local emergency numbers)
+- Adapt to India-specific context (monsoon floods, mountain terrain)
 
 **Critical Rules:**
-1. ALWAYS recommend calling emergency services (108) for life-threatening situations
-2. Provide science-based medical advice only - NO traditional remedies for emergencies
-3. Be clear about when professional medical help is required
-4. For shelter queries, acknowledge that you'll help find nearest locations
-5. Keep responses practical and action-oriented
+1. Provide science-based medical advice only - NO traditional remedies for emergencies
+2. Be clear about when professional medical help is required
+3. For shelter queries, acknowledge that you'll help find nearest locations
+4. Keep responses practical and action-oriented
+5. Remind users to seek professional medical care when possible
 
 **Context:** You're assisting people in mountain regions of India during potential flood, landslide, or altitude emergencies.
 
@@ -217,28 +216,16 @@ Be compassionate but direct. Lives may depend on your guidance."""
             return response['message']['content']
 
         except Exception as e:
-            # Check if Ollama-specific error
-            error_str = str(e).lower()
-            if 'connection' in error_str or 'ollama' in error_str:
-                # Ollama connection issue - provide knowledge base fallback without technical error
-                error_msg = ""
-            else:
-                # Other error - log it for debugging but don't show to user
-                print(f"⚠️  Chatbot error: {e}")
-                error_msg = ""
+            # Log error for debugging but provide graceful fallback to user
+            print(f"⚠️  Chatbot error: {e}")
 
-            # Always provide emergency numbers
-            error_msg += "**Emergency Numbers (India):**\n"
-            error_msg += "📞 108 - Emergency Ambulance (Free)\n"
-            error_msg += "📞 100 - Police\n"
-            error_msg += "📞 1078 - Disaster Management\n\n"
-
-            # If we have knowledge chunks, include them as fallback
+            # Provide knowledge base fallback
             if knowledge_chunks:
-                error_msg += "**First Aid Guidance:**\n\n"
+                error_msg = "**First Aid Guidance:**\n\n"
                 error_msg += "\n\n".join(knowledge_chunks)
+                error_msg += "\n\n⚠️  Note: This information is from the offline knowledge base. Seek professional medical care when possible."
             else:
-                error_msg += "⚠️  I'm currently having technical difficulties. Please call emergency services immediately if this is a life-threatening situation."
+                error_msg = "⚠️  I'm currently unable to provide specific guidance. Please refer to basic first aid principles and seek professional medical care as soon as possible."
 
             return error_msg
 
@@ -287,7 +274,7 @@ def gemma_chat(user_message: str, user_location: Optional[Dict] = None,
         )
 
         if not nearest_shelters:
-            return [{"text": "I couldn't find any shelters in the database. Please contact emergency services at 108 (India Emergency Number)."}]
+            return [{"text": "I couldn't find any shelters in the database. The shelter database may need to be updated."}]
 
         # Format response
         response = "🏥 **Nearest Shelters** (ordered by distance):\n\n"
@@ -297,11 +284,6 @@ def gemma_chat(user_message: str, user_location: Optional[Dict] = None,
             response += f"   🏢 Type: {shelter['type'].replace('_', ' ').title()}\n"
             response += f"   📮 Address: {shelter['address']}\n"
             response += f"   📊 Status: {shelter['operational_status']}\n\n"
-
-        response += "**Important Emergency Numbers (India):**\n"
-        response += "📞 108 - Emergency Ambulance (Free)\n"
-        response += "📞 100 - Police\n"
-        response += "📞 1078 - Disaster Management"
 
         return [{"text": response}]
 
