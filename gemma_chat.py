@@ -89,13 +89,9 @@ Be compassionate but direct. Lives may depend on your guidance."""
             try:
                 pdf_results = self.vector_db.search(user_message, k=top_k)
                 for result in pdf_results:
-                    source = result['metadata']['source']
+                    # Use only the text content, no source citations in user-facing responses
                     text = result['text']
-                    score = result['score']
-
-                    # Format PDF chunk
-                    chunk = f"**[Source: {source}] (Relevance: {score:.2f})**\n{text}"
-                    pdf_chunks.append(chunk)
+                    pdf_chunks.append(text)
             except Exception as e:
                 print(f"⚠️  PDF retrieval error: {e}")
 
@@ -221,8 +217,17 @@ Be compassionate but direct. Lives may depend on your guidance."""
             return response['message']['content']
 
         except Exception as e:
-            # Fallback error message
-            error_msg = f"I'm having trouble connecting to the AI model. Error: {str(e)}\n\n"
+            # Check if Ollama-specific error
+            error_str = str(e).lower()
+            if 'connection' in error_str or 'ollama' in error_str:
+                # Ollama connection issue - provide knowledge base fallback without technical error
+                error_msg = ""
+            else:
+                # Other error - log it for debugging but don't show to user
+                print(f"⚠️  Chatbot error: {e}")
+                error_msg = ""
+
+            # Always provide emergency numbers
             error_msg += "**Emergency Numbers (India):**\n"
             error_msg += "📞 108 - Emergency Ambulance (Free)\n"
             error_msg += "📞 100 - Police\n"
@@ -230,8 +235,10 @@ Be compassionate but direct. Lives may depend on your guidance."""
 
             # If we have knowledge chunks, include them as fallback
             if knowledge_chunks:
-                error_msg += "Here's some relevant information from our knowledge base:\n\n"
+                error_msg += "**First Aid Guidance:**\n\n"
                 error_msg += "\n\n".join(knowledge_chunks)
+            else:
+                error_msg += "⚠️  I'm currently having technical difficulties. Please call emergency services immediately if this is a life-threatening situation."
 
             return error_msg
 
