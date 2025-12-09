@@ -2,11 +2,21 @@
 """
 Gemma 3 Chatbot Wrapper via Ollama
 Provides crisis first-aid assistance for India mountain emergencies
+Enhanced with PDF-based RAG retrieval
 """
 
 import ollama
+import os
 from typing import List, Dict, Optional
 from first_aid_knowledge import FIRST_AID_DATA
+
+# Try to import PDF processor for enhanced retrieval
+try:
+    from pdf_processor import VectorDatabase
+    HAS_VECTOR_DB = True
+except ImportError:
+    HAS_VECTOR_DB = False
+    print("⚠️  PDF vector database not available. Using static knowledge only.")
 
 
 class GemmaEmergencyChat:
@@ -23,6 +33,19 @@ class GemmaEmergencyChat:
         """
         self.model_name = model_name
         self.system_prompt = self._build_system_prompt()
+        self.vector_db = None
+        self.use_pdf_retrieval = False
+
+        # Try to load vector database if available
+        if HAS_VECTOR_DB and os.path.exists("vectordb/vectordb.pkl"):
+            try:
+                print("📚 Loading PDF vector database...")
+                self.vector_db = VectorDatabase.load()
+                self.use_pdf_retrieval = True
+                print(f"✓ Loaded vector database with {len(self.vector_db.chunks)} chunks")
+            except Exception as e:
+                print(f"⚠️  Could not load vector database: {e}")
+                self.use_pdf_retrieval = False
 
     def _build_system_prompt(self) -> str:
         """Build the system prompt for Gemma."""
@@ -48,7 +71,7 @@ Be compassionate but direct. Lives may depend on your guidance."""
 
     def retrieve_relevant_knowledge(self, user_message: str, top_k: int = 3) -> List[str]:
         """
-        Simple keyword-based retrieval from first aid knowledge base.
+        Enhanced retrieval combining static knowledge and PDF vector search.
 
         Args:
             user_message: User's query
@@ -60,7 +83,24 @@ Be compassionate but direct. Lives may depend on your guidance."""
         message_lower = user_message.lower()
         relevant_chunks = []
 
-        # Define keyword mappings to first aid data
+        # 1. Retrieve from PDF vector database (if available)
+        pdf_chunks = []
+        if self.use_pdf_retrieval and self.vector_db:
+            try:
+                pdf_results = self.vector_db.search(user_message, k=top_k)
+                for result in pdf_results:
+                    source = result['metadata']['source']
+                    text = result['text']
+                    score = result['score']
+
+                    # Format PDF chunk
+                    chunk = f"**[Source: {source}] (Relevance: {score:.2f})**\n{text}"
+                    pdf_chunks.append(chunk)
+            except Exception as e:
+                print(f"⚠️  PDF retrieval error: {e}")
+
+        # 2. Retrieve from static knowledge base (original implementation)
+        static_chunks = []
         keyword_mappings = {
             "bleeding": ["bleeding", "blood", "cut", "wound"],
             "burns": ["burn", "burnt", "scald", "fire"],
@@ -94,9 +134,14 @@ Be compassionate but direct. Lives may depend on your guidance."""
             if topic in FIRST_AID_DATA:
                 data = FIRST_AID_DATA[topic]
                 chunk = self._format_knowledge_chunk(topic, data)
-                relevant_chunks.append(chunk)
+                static_chunks.append(chunk)
 
-        return relevant_chunks
+        # 3. Combine PDF and static knowledge
+        # Priority: PDF chunks first (more detailed), then static knowledge
+        relevant_chunks = pdf_chunks + static_chunks
+
+        # Limit to top_k total chunks
+        return relevant_chunks[:top_k * 2]  # Allow slightly more chunks when combining sources
 
     def _format_knowledge_chunk(self, topic: str, data: Dict) -> str:
         """Format a knowledge chunk for context."""
@@ -141,7 +186,11 @@ Be compassionate but direct. Lives may depend on your guidance."""
         # Build context
         context = ""
         if knowledge_chunks:
-            context = "\n**Relevant First Aid Knowledge:**\n\n"
+            context = "\n**Relevant First Aid Knowledge:**\n"
+            if self.use_pdf_retrieval:
+                context += "(Enhanced with PDF medical guidelines)\n\n"
+            else:
+                context += "\n"
             context += "\n\n".join(knowledge_chunks)
             context += "\n\n---\n\n"
 
