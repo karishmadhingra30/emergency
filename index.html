@@ -331,15 +331,15 @@
         <!-- Status Indicator -->
         <div class="status-bar">
             <span class="status-indicator"></span>
-            <span>Emergency Services Ready</span>
+            <span>Offline Mode - Ready to Help</span>
         </div>
 
-        <!-- SOS Emergency Call - Most Prominent Action -->
+        <!-- Emergency Information - Most Prominent Action -->
         <div class="sos-section">
-            <a href="tel:911" class="sos-button" onclick="confirmSOS(event)">
-                <div class="sos-icon">🚨</div>
-                <div class="sos-text">SOS</div>
-                <div class="sos-subtitle">TAP TO CALL 911</div>
+            <a href="/map?view=info" class="sos-button">
+                <div class="sos-icon">ℹ️</div>
+                <div class="sos-text">HELP</div>
+                <div class="sos-subtitle">EMERGENCY INFORMATION</div>
             </a>
         </div>
 
@@ -382,21 +382,14 @@
             </button>
         </div>
 
-        <!-- Emergency Contact -->
+        <!-- App Info -->
         <div class="emergency-footer">
-            <div class="emergency-label">Emergency Hotline</div>
-            <div class="emergency-number">911</div>
+            <div class="emergency-label">Offline Emergency Aid</div>
+            <div class="emergency-number" style="font-size: 16px; letter-spacing: 0;">No Internet Required</div>
         </div>
     </div>
 
     <script>
-        function confirmSOS(event) {
-            // For safety, confirm before calling emergency services
-            if (!confirm('Call 911 Emergency Services now?')) {
-                event.preventDefault();
-            }
-        }
-
         function showMenu() {
             // Future: Show menu with settings, emergency contacts, medical info, etc.
             const options = [
