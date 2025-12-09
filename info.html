@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Emergency Information - Important Resources</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .back-button {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .back-button:active {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 800;
+            flex: 1;
+        }
+
+        /* Info Section */
+        .info-section {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            font-size: 24px;
+        }
+
+        .section-text {
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.95;
+            margin-bottom: 16px;
+        }
+
+        /* Resource Links */
+        .resource-link {
+            background-color: white;
+            color: #DC2626;
+            border: none;
+            border-radius: 14px;
+            padding: 20px 24px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            margin-bottom: 12px;
+        }
+
+        .resource-link:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .resource-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            flex: 1;
+        }
+
+        .resource-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .resource-subtitle {
+            font-size: 14px;
+            font-weight: 500;
+            color: #DC2626;
+            opacity: 0.7;
+        }
+
+        .resource-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #FEE2E2;
+            border-radius: 10px;
+            flex-shrink: 0;
+            font-size: 24px;
+        }
+
+        .arrow-icon {
+            color: #DC2626;
+            font-size: 20px;
+            opacity: 0.5;
+        }
+
+        /* Update Notice */
+        .update-notice {
+            background: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
+            color: #7C2D12;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .update-notice-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .update-notice-text {
+            font-size: 15px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* When to Use Section */
+        .when-to-use {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .when-to-use-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .when-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .when-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .check-icon {
+            color: #10B981;
+            font-size: 20px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: auto;
+            padding-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+            }
+        }
+
+        /* Reduce Motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="/" class="back-button">
+                <span>←</span>
+                <span>Back</span>
+            </a>
+            <h1 class="page-title">Information</h1>
+        </div>
+
+        <!-- Update Notice -->
+        <div class="update-notice">
+            <div class="update-notice-title">
+                <span>🔔</span>
+                <span>Real-Time Updates</span>
+            </div>
+            <div class="update-notice-text">
+                This app is automatically updated whenever the National Disaster Management Authority or FloodNavigator push new flood and disaster warning messages. Stay connected to receive the latest alerts.
+            </div>
+        </div>
+
+        <!-- When to Use These Resources -->
+        <div class="when-to-use">
+            <div class="when-to-use-title">When to reach these resources:</div>
+            <div class="when-item">
+                <span class="check-icon">✓</span>
+                <span>For official flood warnings and real-time inundation maps</span>
+            </div>
+            <div class="when-item">
+                <span class="check-icon">✓</span>
+                <span>To check current disaster alerts in your region</span>
+            </div>
+            <div class="when-item">
+                <span class="check-icon">✓</span>
+                <span>To access preparedness guidelines and safety protocols</span>
+            </div>
+            <div class="when-item">
+                <span class="check-icon">✓</span>
+                <span>For evacuation routes and emergency response plans</span>
+            </div>
+            <div class="when-item">
+                <span class="check-icon">✓</span>
+                <span>To report disaster incidents or request assistance</span>
+            </div>
+        </div>
+
+        <!-- Official Resources Section -->
+        <div class="info-section">
+            <div class="section-title">
+                <span class="section-icon">🌊</span>
+                <span>Official Resources</span>
+            </div>
+            <div class="section-text">
+                Access official disaster management and flood monitoring systems maintained by government authorities.
+            </div>
+
+            <!-- FloodNavigator 2 -->
+            <a href="https://floodnavigator.com" target="_blank" class="resource-link" onclick="trackClick('FloodNavigator2')">
+                <div class="resource-icon">🗺️</div>
+                <div class="resource-content">
+                    <div class="resource-title">FloodNavigator 2</div>
+                    <div class="resource-subtitle">Real-time flood monitoring & mapping</div>
+                </div>
+                <span class="arrow-icon">→</span>
+            </a>
+
+            <!-- NDMA India -->
+            <a href="https://ndma.gov.in" target="_blank" class="resource-link" onclick="trackClick('NDMA')">
+                <div class="resource-icon">🇮🇳</div>
+                <div class="resource-content">
+                    <div class="resource-title">NDMA India</div>
+                    <div class="resource-subtitle">National Disaster Management Authority</div>
+                </div>
+                <span class="arrow-icon">→</span>
+            </a>
+        </div>
+
+        <!-- Additional Info Section -->
+        <div class="info-section">
+            <div class="section-title">
+                <span class="section-icon">ℹ️</span>
+                <span>About These Resources</span>
+            </div>
+            <div class="section-text">
+                <strong>FloodNavigator 2</strong> provides comprehensive flood forecasting, inundation mapping, and early warning systems. Access real-time flood risk assessments and historical flood data.
+            </div>
+            <div class="section-text">
+                <strong>National Disaster Management Authority (NDMA)</strong> is India's apex body for disaster management. Get official alerts, guidelines, and emergency response information for all types of disasters.
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Always dial 911 for immediate emergencies</p>
+        </div>
+    </div>
+
+    <script>
+        function trackClick(resource) {
+            console.log(`Opening ${resource}`);
+            // Add analytics tracking here if needed
+        }
+
+        // Vibrate on button press for haptic feedback
+        document.querySelectorAll('.resource-link, .back-button').forEach(button => {
+            button.addEventListener('touchstart', () => {
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(10);
+                }
+            });
+        });
+
+        // Prevent accidental zoom on double-tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (event) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
