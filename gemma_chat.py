@@ -114,8 +114,7 @@ Be compassionate but direct. Lives may depend on your guidance."""
             "sprain": ["sprain", "twisted", "ankle"],
             "flood_safety": ["flood", "water rising", "flash flood", "monsoon"],
             "flood_injuries": ["waterborne", "leptospirosis", "contaminated water"],
-            "mountain_emergencies": ["altitude", "landslide", "lost", "stranded", "mountain"],
-            "indian_emergency_numbers": ["emergency number", "helpline", "who to call", "ambulance number"]
+            "mountain_emergencies": ["altitude", "landslide", "lost", "stranded", "mountain"]
         }
 
         # Find matching topics
