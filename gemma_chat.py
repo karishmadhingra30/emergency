@@ -53,17 +53,16 @@ class GemmaEmergencyChat:
 
 **Your Role:**
 - Provide immediate, actionable first-aid guidance
-- Emphasize calling emergency services (108, 100, 1078) for serious situations
 - Give clear, step-by-step instructions
 - Be concise but thorough
-- Adapt to India-specific context (monsoon floods, mountain terrain, local emergency numbers)
+- Adapt to India-specific context (monsoon floods, mountain terrain)
 
 **Critical Rules:**
-1. ALWAYS recommend calling emergency services (108) for life-threatening situations
-2. Provide science-based medical advice only - NO traditional remedies for emergencies
-3. Be clear about when professional medical help is required
-4. For shelter queries, acknowledge that you'll help find nearest locations
-5. Keep responses practical and action-oriented
+1. Provide science-based medical advice only - NO traditional remedies for emergencies
+2. Be clear about when professional medical help is required
+3. For shelter queries, acknowledge that you'll help find nearest locations
+4. Keep responses practical and action-oriented
+5. Remind users to seek professional medical care when possible
 
 **Context:** You're assisting people in mountain regions of India during potential flood, landslide, or altitude emergencies.
 
@@ -89,13 +88,9 @@ Be compassionate but direct. Lives may depend on your guidance."""
             try:
                 pdf_results = self.vector_db.search(user_message, k=top_k)
                 for result in pdf_results:
-                    source = result['metadata']['source']
+                    # Use only the text content, no source citations in user-facing responses
                     text = result['text']
-                    score = result['score']
-
-                    # Format PDF chunk
-                    chunk = f"**[Source: {source}] (Relevance: {score:.2f})**\n{text}"
-                    pdf_chunks.append(chunk)
+                    pdf_chunks.append(text)
             except Exception as e:
                 print(f"⚠️  PDF retrieval error: {e}")
 
@@ -119,8 +114,7 @@ Be compassionate but direct. Lives may depend on your guidance."""
             "sprain": ["sprain", "twisted", "ankle"],
             "flood_safety": ["flood", "water rising", "flash flood", "monsoon"],
             "flood_injuries": ["waterborne", "leptospirosis", "contaminated water"],
-            "mountain_emergencies": ["altitude", "landslide", "lost", "stranded", "mountain"],
-            "indian_emergency_numbers": ["emergency number", "helpline", "who to call", "ambulance number"]
+            "mountain_emergencies": ["altitude", "landslide", "lost", "stranded", "mountain"]
         }
 
         # Find matching topics
@@ -221,17 +215,16 @@ Be compassionate but direct. Lives may depend on your guidance."""
             return response['message']['content']
 
         except Exception as e:
-            # Fallback error message
-            error_msg = f"I'm having trouble connecting to the AI model. Error: {str(e)}\n\n"
-            error_msg += "**Emergency Numbers (India):**\n"
-            error_msg += "📞 108 - Emergency Ambulance (Free)\n"
-            error_msg += "📞 100 - Police\n"
-            error_msg += "📞 1078 - Disaster Management\n\n"
+            # Log error for debugging but provide graceful fallback to user
+            print(f"⚠️  Chatbot error: {e}")
 
-            # If we have knowledge chunks, include them as fallback
+            # Provide knowledge base fallback
             if knowledge_chunks:
-                error_msg += "Here's some relevant information from our knowledge base:\n\n"
+                error_msg = "**First Aid Guidance:**\n\n"
                 error_msg += "\n\n".join(knowledge_chunks)
+                error_msg += "\n\n⚠️  Note: This information is from the offline knowledge base. Seek professional medical care when possible."
+            else:
+                error_msg = "⚠️  I'm currently unable to provide specific guidance. Please refer to basic first aid principles and seek professional medical care as soon as possible."
 
             return error_msg
 
@@ -272,51 +265,26 @@ def gemma_chat(user_message: str, user_location: Optional[Dict] = None,
         # Import here to avoid circular dependency
         from app import shelter_manager
 
-        try:
-            # Validate location data
-            lat = user_location.get('latitude')
-            lon = user_location.get('longitude')
+        # Find nearest shelters
+        nearest_shelters = shelter_manager.find_nearest_shelters(
+            user_location.get('latitude'),
+            user_location.get('longitude'),
+            limit=5
+        )
 
-            print(f"[DEBUG] gemma_chat - Looking up shelters for location: lat={lat}, lon={lon}")
-            print(f"[DEBUG] gemma_chat - shelter_manager has {len(shelter_manager.shelters)} shelters loaded")
+        if not nearest_shelters:
+            return [{"text": "I couldn't find any shelters in the database. The shelter database may need to be updated."}]
 
-            if lat is None or lon is None:
-                print(f"[ERROR] gemma_chat - Missing coordinates: lat={lat}, lon={lon}")
-                return [{"text": "📍 Location data is incomplete. Please provide valid coordinates."}]
+        # Format response
+        response = "🏥 **Nearest Shelters** (ordered by distance):\n\n"
+        for idx, shelter in enumerate(nearest_shelters, 1):
+            response += f"**{idx}. {shelter['name']}**\n"
+            response += f"   📍 Distance: {shelter['distance_km']} km ({shelter['distance_miles']} miles)\n"
+            response += f"   🏢 Type: {shelter['type'].replace('_', ' ').title()}\n"
+            response += f"   📮 Address: {shelter['address']}\n"
+            response += f"   📊 Status: {shelter['operational_status']}\n\n"
 
-            # Convert to float to ensure proper types
-            lat = float(lat)
-            lon = float(lon)
-
-            # Find nearest shelters
-            nearest_shelters = shelter_manager.find_nearest_shelters(lat, lon, limit=5)
-
-            print(f"[DEBUG] gemma_chat - Found {len(nearest_shelters)} nearest shelters")
-
-            if not nearest_shelters:
-                return [{"text": "I couldn't find any shelters in the database. Please contact emergency services at 108 (India Emergency Number)."}]
-
-            # Format response
-            response = "🏥 **Nearest Shelters** (ordered by distance):\n\n"
-            for idx, shelter in enumerate(nearest_shelters, 1):
-                response += f"**{idx}. {shelter['name']}**\n"
-                response += f"   📍 Distance: {shelter['distance_km']} km ({shelter['distance_miles']} miles)\n"
-                response += f"   🏢 Type: {shelter['type'].replace('_', ' ').title()}\n"
-                response += f"   📮 Address: {shelter['address']}\n"
-                response += f"   📊 Status: {shelter['operational_status']}\n\n"
-
-            response += "**Important Emergency Numbers (India):**\n"
-            response += "📞 108 - Emergency Ambulance (Free)\n"
-            response += "📞 100 - Police\n"
-            response += "📞 1078 - Disaster Management"
-
-            return [{"text": response}]
-
-        except Exception as e:
-            print(f"[ERROR] gemma_chat - Error finding shelters: {e}")
-            import traceback
-            traceback.print_exc()
-            return [{"text": f"Error finding shelters: {str(e)}. Please contact emergency services at 108 (India Emergency Number)."}]
+        return [{"text": response}]
 
     # For non-shelter queries, use Gemma chatbot
     chatbot = get_gemma_chat(model_name)
