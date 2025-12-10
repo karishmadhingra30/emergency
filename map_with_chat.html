@@ -343,6 +343,72 @@
             }
         }
 
+        /* SOS Floating Button */
+        .sos-floating {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 1002;
+            background: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
+            color: #7C2D12;
+            border: 4px solid white;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .sos-floating:active {
+            transform: scale(0.95);
+        }
+
+        .sos-floating::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            animation: sos-pulse-map 2s ease-out infinite;
+        }
+
+        @keyframes sos-pulse-map {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.8);
+                opacity: 0;
+            }
+        }
+
+        .sos-floating .emoji {
+            font-size: 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sos-floating .text {
+            font-size: 13px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 1.5px;
+            line-height: 1;
+        }
+
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .chat-container {
@@ -353,6 +419,28 @@
 
             .location-controls {
                 top: 90px;
+            }
+
+            .sos-floating {
+                width: 65px;
+                height: 65px;
+                right: 15px;
+                top: 85px;
+            }
+
+            .sos-floating .emoji {
+                font-size: 24px;
+            }
+
+            .sos-floating .text {
+                font-size: 11px;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            .sos-floating::before {
+                animation: none !important;
             }
         }
     </style>
@@ -369,6 +457,12 @@
     </div>
 
     <div id="map"></div>
+
+    <!-- Quick Help Button -->
+    <button class="sos-floating" onclick="showQuickHelp()">
+        <div class="emoji">ℹ️</div>
+        <div class="text">INFO</div>
+    </button>
 
     <div class="location-controls">
         <button class="location-button" onclick="getMyLocation()">📍 Get My Location</button>
@@ -540,6 +634,23 @@
             const toggle = document.getElementById('chatToggle');
             container.classList.toggle('minimized');
             toggle.textContent = container.classList.contains('minimized') ? '+' : '−';
+        }
+
+        function showQuickHelp() {
+            const helpInfo =
+                "📋 EMERGENCY INFORMATION\n\n" +
+                "Available Features:\n" +
+                "• First Aid Chat - Get step-by-step medical guidance\n" +
+                "• Find Shelters - Locate nearest safe places on map\n" +
+                "• Offline Access - All features work without internet\n\n" +
+                "How to Use:\n" +
+                "1. Click 'Get My Location' or tap the map\n" +
+                "2. Use chat for first aid instructions\n" +
+                "3. View nearby shelters with distances\n\n" +
+                "⚠️ For life-threatening emergencies,\n" +
+                "seek professional medical help immediately.";
+
+            alert(helpInfo);
         }
 
         function handleKeyPress(event) {

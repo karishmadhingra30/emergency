@@ -31,42 +31,6 @@
             max-width: 100%;
         }
 
-        /* Header with Logo */
-        .app-header {
-            text-align: center;
-            margin-bottom: 32px;
-            padding-top: 20px;
-        }
-
-        .app-logo {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 16px;
-            background: white;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-        }
-
-        .app-title {
-            font-size: 36px;
-            font-weight: 900;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-        }
-
-        .app-tagline {
-            font-size: 16px;
-            font-weight: 500;
-            opacity: 0.95;
-            line-height: 1.5;
-            max-width: 320px;
-            margin: 0 auto;
-        }
-
         /* Status Bar */
         .status-bar {
             background-color: rgba(0, 0, 0, 0.2);
@@ -91,6 +55,81 @@
         @keyframes pulse-status {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
+        }
+
+        /* SOS Emergency Button - Most Prominent */
+        .sos-section {
+            margin-bottom: 30px;
+        }
+
+        .sos-button {
+            background: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
+            color: #7C2D12;
+            border: 4px solid #ffffff;
+            border-radius: 20px;
+            padding: 32px 40px;
+            font-size: 32px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            min-height: 140px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sos-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            animation: sos-pulse 2s ease-out infinite;
+        }
+
+        @keyframes sos-pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2.5);
+                opacity: 0;
+            }
+        }
+
+        .sos-button:active {
+            transform: scale(0.98);
+        }
+
+        .sos-icon {
+            font-size: 48px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sos-text {
+            position: relative;
+            z-index: 1;
+            letter-spacing: 4px;
+        }
+
+        .sos-subtitle {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 1;
         }
 
         /* Primary Action Buttons */
@@ -190,6 +229,28 @@
             background-color: rgba(255, 255, 255, 0.15);
         }
 
+        /* Emergency Contact Footer */
+        .emergency-footer {
+            margin-top: 24px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .emergency-number {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-top: 8px;
+        }
+
+        .emergency-label {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 600;
+        }
+
         /* SVG Icons */
         .chat-icon {
             stroke: currentColor;
@@ -225,6 +286,19 @@
         }
 
         @media (max-height: 700px) {
+            .sos-button {
+                padding: 24px 32px;
+                min-height: 110px;
+            }
+
+            .sos-icon {
+                font-size: 36px;
+            }
+
+            .sos-text {
+                font-size: 28px;
+            }
+
             .action-btn {
                 min-height: 70px;
                 padding: 20px 28px;
@@ -235,6 +309,10 @@
         @media (prefers-contrast: high) {
             .action-btn {
                 border: 2px solid #DC2626;
+            }
+
+            .sos-button {
+                border-width: 6px;
             }
         }
 
@@ -379,17 +457,19 @@
 </head>
 <body>
     <div class="container">
-        <!-- App Header -->
-        <div class="app-header">
-            <div class="app-logo">🤝</div>
-            <h1 class="app-title">Emergency Aid</h1>
-            <p class="app-tagline">Your trusted companion for emergency situations, first aid guidance, and disaster preparedness</p>
-        </div>
-
         <!-- Status Indicator -->
         <div class="status-bar">
             <span class="status-indicator"></span>
-            <span>Emergency Services Ready</span>
+            <span>Offline Mode - Ready to Help</span>
+        </div>
+
+        <!-- Emergency Information - Most Prominent Action -->
+        <div class="sos-section">
+            <a href="/map?view=info" class="sos-button">
+                <div class="sos-icon">ℹ️</div>
+                <div class="sos-text">HELP</div>
+                <div class="sos-subtitle">EMERGENCY INFORMATION</div>
+            </a>
         </div>
 
         <!-- Primary Actions -->
@@ -430,11 +510,17 @@
                 More Options
             </button>
         </div>
+
+        <!-- App Info -->
+        <div class="emergency-footer">
+            <div class="emergency-label">Offline Emergency Aid</div>
+            <div class="emergency-number" style="font-size: 16px; letter-spacing: 0;">No Internet Required</div>
+        </div>
     </div>
 
     <!-- Menu Modal -->
     <div class="menu-overlay" id="menuOverlay" onclick="closeMenuOnOverlay(event)">
-        <div class="menu-modal">
+        <div class="menu-modal" onclick="event.stopPropagation()">
             <div class="menu-header">
                 <div class="menu-title">More Options</div>
                 <button class="menu-close" onclick="closeMenu()">✕</button>
@@ -458,7 +544,7 @@
                     <div class="menu-item-arrow">›</div>
                 </a>
 
-                <a href="/emergency-contacts" class="menu-item">
+                <a href="#" class="menu-item" onclick="alert('Coming soon'); return false;">
                     <div class="menu-item-icon">📋</div>
                     <div class="menu-item-content">
                         <div class="menu-item-title">Emergency Contacts</div>
@@ -511,20 +597,29 @@
         }
 
         function closeMenuOnOverlay(event) {
-            // Only close if clicking directly on the overlay, not on the modal content
-            if (event.target.id === 'menuOverlay') {
+            if (event.target === event.currentTarget) {
                 closeMenu();
             }
         }
 
         // Vibrate on button press for haptic feedback
-        document.querySelectorAll('.action-btn, .secondary-btn').forEach(button => {
+        document.querySelectorAll('.action-btn, .sos-button, .secondary-btn').forEach(button => {
             button.addEventListener('touchstart', () => {
                 if ('vibrate' in navigator) {
                     navigator.vibrate(10);
                 }
             });
         });
+
+        // Prevent accidental zoom on double-tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (event) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
     </script>
 </body>
 </html>
