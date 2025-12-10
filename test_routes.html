@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 { color: #DC2626; }
+        .test-link {
+            display: block;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f0f0f0;
+            text-decoration: none;
+            color: #333;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+        .test-link:hover {
+            background: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Route Testing Page</h1>
+    <p>Click each link to test navigation:</p>
+
+    <a href="/" class="test-link">Home / Index</a>
+    <a href="/map" class="test-link">Map with Chat</a>
+    <a href="/info" class="test-link">Emergency Information (FloodWatch & NDMA)</a>
+    <a href="/medical-info" class="test-link">Medical Information</a>
+    <a href="/emergency-contacts" class="test-link">Emergency Contacts</a>
+
+    <hr>
+    <p><strong>All routes should navigate properly. If any fail, check app.py routes.</strong></p>
+</body>
+</html>
