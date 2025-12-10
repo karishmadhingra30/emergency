@@ -264,7 +264,7 @@
                 <span>Real-Time Updates</span>
             </div>
             <div class="update-notice-text">
-                This app is automatically updated whenever the National Disaster Management Authority or FloodNavigator push new flood and disaster warning messages. Stay connected to receive the latest alerts.
+                This app is automatically updated whenever the National Disaster Management Authority or FloodWatch India 2.0 push new flood and disaster warning messages. Stay connected to receive the latest alerts.
             </div>
         </div>
 
@@ -303,22 +303,22 @@
                 Access official disaster management and flood monitoring systems maintained by government authorities.
             </div>
 
-            <!-- FloodNavigator 2 -->
-            <a href="https://floodnavigator.com" target="_blank" class="resource-link" onclick="trackClick('FloodNavigator2')">
+            <!-- FloodWatch India 2.0 -->
+            <a href="https://ffs.india-water.gov.in/" target="_blank" class="resource-link" onclick="trackClick('FloodWatchIndia')">
                 <div class="resource-icon">🗺️</div>
                 <div class="resource-content">
-                    <div class="resource-title">FloodNavigator 2</div>
-                    <div class="resource-subtitle">Real-time flood monitoring & mapping</div>
+                    <div class="resource-title">FloodWatch India 2.0</div>
+                    <div class="resource-subtitle">Real-time flood monitoring & forecasting</div>
                 </div>
                 <span class="arrow-icon">→</span>
             </a>
 
-            <!-- NDMA India -->
-            <a href="https://ndma.gov.in" target="_blank" class="resource-link" onclick="trackClick('NDMA')">
+            <!-- NDMA SACHET -->
+            <a href="https://sachet.ndma.gov.in/CapFeed" target="_blank" class="resource-link" onclick="trackClick('NDMA_SACHET')">
                 <div class="resource-icon">🇮🇳</div>
                 <div class="resource-content">
-                    <div class="resource-title">NDMA India</div>
-                    <div class="resource-subtitle">National Disaster Management Authority</div>
+                    <div class="resource-title">NDMA SACHET</div>
+                    <div class="resource-subtitle">Subscribe to disaster alert texts</div>
                 </div>
                 <span class="arrow-icon">→</span>
             </a>
@@ -331,16 +331,16 @@
                 <span>About These Resources</span>
             </div>
             <div class="section-text">
-                <strong>FloodNavigator 2</strong> provides comprehensive flood forecasting, inundation mapping, and early warning systems. Access real-time flood risk assessments and historical flood data.
+                <strong>FloodWatch India 2.0</strong> is the official mobile app of the Central Water Commission, Government of India. It provides comprehensive flood forecasting, real-time inundation mapping, and early warning systems. Access live flood situations, forecasts, and historical flood data across India.
             </div>
             <div class="section-text">
-                <strong>National Disaster Management Authority (NDMA)</strong> is India's apex body for disaster management. Get official alerts, guidelines, and emergency response information for all types of disasters.
+                <strong>NDMA SACHET (System for Alert Coordination and Harmonious Emergency Telecommunications)</strong> is India's national multi-hazard early warning system. Subscribe to receive real-time SMS alerts for floods, earthquakes, cyclones, and other disasters directly on your mobile phone.
             </div>
         </div>
 
         <!-- Footer -->
         <div class="footer">
-            <p>Always dial 911 for immediate emergencies</p>
+            <p>Stay safe and prepared</p>
         </div>
     </div>
 
@@ -358,16 +358,6 @@
                 }
             });
         });
-
-        // Prevent accidental zoom on double-tap
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', (event) => {
-            const now = Date.now();
-            if (now - lastTouchEnd <= 300) {
-                event.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
     </script>
 </body>
 </html>
