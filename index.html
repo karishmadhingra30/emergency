@@ -520,7 +520,7 @@
 
     <!-- Menu Modal -->
     <div class="menu-overlay" id="menuOverlay" onclick="closeMenuOnOverlay(event)">
-        <div class="menu-modal" onclick="event.stopPropagation()">
+        <div class="menu-modal">
             <div class="menu-header">
                 <div class="menu-title">More Options</div>
                 <button class="menu-close" onclick="closeMenu()">✕</button>
@@ -604,7 +604,8 @@
         }
 
         function closeMenuOnOverlay(event) {
-            if (event.target === event.currentTarget) {
+            // Only close if clicking directly on the overlay, not on the modal content
+            if (event.target.id === 'menuOverlay') {
                 closeMenu();
             }
         }
@@ -617,17 +618,6 @@
                 }
             });
         });
-
-        // Prevent accidental zoom on double-tap (but allow link clicks)
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', (event) => {
-            const now = Date.now();
-            // Don't prevent default for links or buttons
-            if (now - lastTouchEnd <= 300 && !event.target.closest('a') && !event.target.closest('button')) {
-                event.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
     </script>
 </body>
 </html>

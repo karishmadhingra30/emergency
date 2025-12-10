@@ -358,17 +358,6 @@
                 }
             });
         });
-
-        // Prevent accidental zoom on double-tap (but allow link clicks)
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', (event) => {
-            const now = Date.now();
-            // Don't prevent default for links or buttons
-            if (now - lastTouchEnd <= 300 && !event.target.closest('a') && !event.target.closest('button')) {
-                event.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
     </script>
 </body>
 </html>
