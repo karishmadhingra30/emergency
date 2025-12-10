@@ -608,11 +608,6 @@
                             addBotMessage(response.text);
                         }
 
-                        // Plot shelters on map if they're included in the response
-                        if (response.shelters && response.shelters.length > 0) {
-                            plotSheltersOnMap(response.shelters);
-                        }
-
                         // Handle special actions
                         if (response.custom) {
                             handleCustomAction(response.custom);
@@ -713,36 +708,6 @@
             } catch (error) {
                 console.error('Error finding nearest shelter:', error);
                 addBotMessage("Error finding nearest shelter. Please try again.");
-            }
-        }
-
-        // Plot shelters received from chatbot on the map
-        function plotSheltersOnMap(shelters) {
-            // Clear existing shelter markers
-            shelterMarkers.forEach(marker => {
-                map.removeLayer(marker);
-            });
-            shelterMarkers = [];
-
-            // Add new shelter markers
-            shelters.forEach(shelter => {
-                addShelterMarker(shelter);
-            });
-
-            // If there are shelters and user location, adjust map view to show all markers
-            if (shelters.length > 0 && userLocation) {
-                const bounds = L.latLngBounds([]);
-
-                // Add user location to bounds
-                bounds.extend([userLocation.lat, userLocation.lon]);
-
-                // Add all shelter locations to bounds
-                shelters.forEach(shelter => {
-                    bounds.extend([shelter.latitude, shelter.longitude]);
-                });
-
-                // Fit map to show all markers with some padding
-                map.fitBounds(bounds, { padding: [50, 50] });
             }
         }
 
