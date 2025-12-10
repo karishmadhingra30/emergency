@@ -184,6 +184,10 @@ def chat():
         # Process message through Gemma chatbot
         bot_responses = gemma_chat(user_message, user_location)
 
+        # Debug logging
+        print(f"[DEBUG] bot_responses type: {type(bot_responses)}")
+        print(f"[DEBUG] bot_responses content: {bot_responses}")
+
         return jsonify({
             'success': True,
             'responses': bot_responses

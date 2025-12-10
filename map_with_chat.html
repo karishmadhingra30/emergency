@@ -599,6 +599,7 @@
                 });
 
                 const data = await response.json();
+                console.log('Backend response:', data);
 
                 hideTypingIndicator();
 
@@ -619,6 +620,7 @@
                         }
                     });
                 } else {
+                    console.error('Invalid response format:', data);
                     addBotMessage("I'm having trouble connecting. Please make sure the backend server is running.");
                 }
             } catch (error) {
