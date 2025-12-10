@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Emergency Contacts - Emergency Aid</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .back-button {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .back-button:active {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 800;
+            flex: 1;
+        }
+
+        /* Emergency Contacts Card */
+        .contacts-card {
+            background: linear-gradient(135deg, #F87171 0%, #EF4444 100%);
+            border-radius: 24px;
+            padding: 32px 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            color: white;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .asterisk-icon {
+            font-size: 36px;
+            font-weight: 900;
+        }
+
+        .title-text {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .contact-item {
+            margin-bottom: 28px;
+            padding-bottom: 28px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .contact-item:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .contact-relationship {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            opacity: 0.9;
+            text-transform: lowercase;
+        }
+
+        .contact-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .contact-name input {
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .contact-name input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .contact-name input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .contact-phone {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-phone input {
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: inherit;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-phone input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .contact-phone input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .qr-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .last-update {
+            font-size: 13px;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        .qr-code {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 8px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #333;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Add Contact Button */
+        .add-contact-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 20px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .add-contact-btn:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px 24px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #DC2626;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            background: #F3F4F6;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Delete Contact Button */
+        .delete-contact-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .delete-contact-btn:active {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 640px) {
+            .qr-section {
+                flex-direction: column;
+                gap: 16px;
+                align-items: center;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* Reduce Motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/" class="back-button">
+            <span>←</span>
+            <span>Back</span>
+        </a>
+        <h1 class="page-title">Emergency Contacts</h1>
+    </div>
+
+    <div class="contacts-card">
+        <div class="card-title">
+            <span class="asterisk-icon">✱</span>
+            <span class="title-text">Emergency Contacts</span>
+        </div>
+
+        <div id="contactsList">
+            <!-- Contacts will be dynamically loaded here -->
+        </div>
+
+        <button class="add-contact-btn" onclick="addContact()">
+            <span>➕</span>
+            <span>Add New Contact</span>
+        </button>
+
+        <div class="qr-section">
+            <div class="last-update" id="lastUpdate">Last Update: Not saved yet</div>
+            <div class="qr-code">
+                📱<br>QR Code
+            </div>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button class="btn btn-primary" onclick="saveContacts()">💾 Save Contacts</button>
+        <button class="btn btn-secondary" onclick="exportContacts()">📤 Export CSV</button>
+    </div>
+
+    <script>
+        // Default contact relationships for Indian families
+        const defaultRelationships = ['mother', 'father', 'sister', 'brother', 'spouse', 'child', 'friend', 'doctor', 'other'];
+
+        // Load contacts on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadContacts();
+        });
+
+        function loadContacts() {
+            const savedData = localStorage.getItem('emergencyContacts');
+            let contacts = [];
+
+            if (savedData) {
+                contacts = JSON.parse(savedData);
+                const lastUpdated = localStorage.getItem('contactsLastUpdate');
+                if (lastUpdated) {
+                    const date = new Date(lastUpdated);
+                    document.getElementById('lastUpdate').textContent =
+                        `Last Update: ${date.toLocaleDateString('en-IN')} ${date.toLocaleTimeString('en-IN', {hour: '2-digit', minute: '2-digit'})}`;
+                }
+            } else {
+                // Create default contacts for Indian users
+                contacts = [
+                    { relationship: 'mother', name: '', phone: '+91 ' },
+                    { relationship: 'father', name: '', phone: '+91 ' },
+                    { relationship: 'sister', name: '', phone: '+91 ' },
+                    { relationship: 'brother', name: '', phone: '+91 ' }
+                ];
+            }
+
+            renderContacts(contacts);
+        }
+
+        function renderContacts(contacts) {
+            const container = document.getElementById('contactsList');
+            container.innerHTML = '';
+
+            contacts.forEach((contact, index) => {
+                const contactDiv = document.createElement('div');
+                contactDiv.className = 'contact-item';
+                contactDiv.innerHTML = `
+                    <div class="contact-relationship">${contact.relationship}</div>
+                    <div class="contact-name">
+                        <input type="text"
+                               placeholder="Full Name"
+                               value="${contact.name || ''}"
+                               data-index="${index}"
+                               data-field="name"
+                               onchange="updateContact(this)">
+                    </div>
+                    <div class="contact-phone">
+                        <input type="tel"
+                               placeholder="+91 (555) 000 11 22"
+                               value="${contact.phone || '+91 '}"
+                               data-index="${index}"
+                               data-field="phone"
+                               onchange="updateContact(this)">
+                    </div>
+                    <button class="delete-contact-btn" onclick="deleteContact(${index})">🗑️ Delete</button>
+                `;
+                container.appendChild(contactDiv);
+            });
+        }
+
+        function updateContact(input) {
+            const savedData = localStorage.getItem('emergencyContacts');
+            const contacts = savedData ? JSON.parse(savedData) : [];
+
+            const index = parseInt(input.dataset.index);
+            const field = input.dataset.field;
+
+            if (contacts[index]) {
+                contacts[index][field] = input.value;
+                localStorage.setItem('emergencyContacts', JSON.stringify(contacts));
+            }
+        }
+
+        function addContact() {
+            const relationship = prompt('Enter relationship (e.g., mother, father, friend, doctor):', 'friend');
+            if (!relationship) return;
+
+            const savedData = localStorage.getItem('emergencyContacts');
+            const contacts = savedData ? JSON.parse(savedData) : [];
+
+            contacts.push({
+                relationship: relationship.toLowerCase(),
+                name: '',
+                phone: '+91 '
+            });
+
+            localStorage.setItem('emergencyContacts', JSON.stringify(contacts));
+            loadContacts();
+        }
+
+        function deleteContact(index) {
+            if (!confirm('Are you sure you want to delete this contact?')) return;
+
+            const savedData = localStorage.getItem('emergencyContacts');
+            const contacts = savedData ? JSON.parse(savedData) : [];
+
+            contacts.splice(index, 1);
+            localStorage.setItem('emergencyContacts', JSON.stringify(contacts));
+            loadContacts();
+        }
+
+        function saveContacts() {
+            // Collect all current values
+            const contacts = [];
+            document.querySelectorAll('.contact-item').forEach(item => {
+                const relationship = item.querySelector('.contact-relationship').textContent;
+                const name = item.querySelector('input[data-field="name"]').value;
+                const phone = item.querySelector('input[data-field="phone"]').value;
+
+                contacts.push({ relationship, name, phone });
+            });
+
+            // Save to localStorage
+            localStorage.setItem('emergencyContacts', JSON.stringify(contacts));
+            localStorage.setItem('contactsLastUpdate', new Date().toISOString());
+
+            // Update last update display
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent =
+                `Last Update: ${now.toLocaleDateString('en-IN')} ${now.toLocaleTimeString('en-IN', {hour: '2-digit', minute: '2-digit'})}`;
+
+            // Visual feedback
+            alert('✅ Emergency contacts saved successfully!');
+
+            // Haptic feedback
+            if ('vibrate' in navigator) {
+                navigator.vibrate(50);
+            }
+        }
+
+        function exportContacts() {
+            const savedData = localStorage.getItem('emergencyContacts');
+            if (!savedData) {
+                alert('No contacts to export. Please add and save contacts first.');
+                return;
+            }
+
+            const contacts = JSON.parse(savedData);
+
+            // Create CSV content
+            let csv = 'Relationship,Name,Phone\n';
+            contacts.forEach(contact => {
+                csv += `${contact.relationship},"${contact.name}","${contact.phone}"\n`;
+            });
+
+            // Create download link
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'emergency_contacts.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            alert('✅ Contacts exported to CSV!');
+        }
+
+        // Haptic feedback for buttons
+        document.querySelectorAll('.btn, .back-button, .add-contact-btn').forEach(button => {
+            button.addEventListener('touchstart', () => {
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(10);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

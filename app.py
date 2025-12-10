@@ -141,6 +141,12 @@ def medical_info_page():
     return send_file('medical_info.html')
 
 
+@app.route('/emergency-contacts')
+def emergency_contacts_page():
+    """Serve the emergency contacts page."""
+    return send_file('emergency_contacts.html')
+
+
 @app.route('/chat', methods=['POST'])
 def chat():
     """
