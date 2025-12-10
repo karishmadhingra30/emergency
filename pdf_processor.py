@@ -137,10 +137,49 @@ class PDFProcessor:
             text = ""
             for page in reader.pages:
                 text += page.extract_text() + "\n\n"
+
+            # Clean the extracted text
+            text = self._clean_extracted_text(text)
+
             return text
         except Exception as e:
             print(f"❌ Error extracting text from {pdf_path}: {e}")
             return ""
+
+    def _clean_extracted_text(self, text: str) -> str:
+        """Clean extracted PDF text by removing artifacts"""
+        # Remove page numbers (standalone numbers)
+        text = re.sub(r'\n\d{1,4}\n', '\n', text)
+
+        # Remove common headers/footers patterns
+        text = re.sub(r'\n[A-Z\s]{3,30}\n', '\n', text)  # ALL CAPS headers
+
+        # Remove document reference codes (e.g., "3-2FM 4-25.11/NTRP 4-02.1/AFMAN 44-163(I)")
+        text = re.sub(r'\d+-\d+[A-Z]{2,}\s+[\d\-\.\/A-Z\(\)]+', '', text)
+
+        # Remove standalone reference numbers
+        text = re.sub(r'\b\d{1,2}-\d{1,2}\b', '', text)
+
+        # Remove multiple consecutive newlines
+        text = re.sub(r'\n{3,}', '\n\n', text)
+
+        # Remove extra whitespace
+        text = re.sub(r' {2,}', ' ', text)
+
+        # Fix broken words (remove single-character lines that aren't bullets)
+        lines = text.split('\n')
+        cleaned_lines = []
+        for i, line in enumerate(lines):
+            line = line.strip()
+            # Keep bullet points and meaningful single-character lines
+            if len(line) == 1 and line not in ['•', '◦', '-', '*', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+                # This is likely a page number or artifact, skip it
+                continue
+            cleaned_lines.append(line)
+
+        text = '\n'.join(cleaned_lines)
+
+        return text.strip()
 
     def process_all_pdfs(self) -> List[Dict]:
         """Process all PDFs in the Docs folder"""
