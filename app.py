@@ -141,6 +141,12 @@ def map_page():
     return send_file('map_with_chat.html')
 
 
+@app.route('/info')
+def info_page():
+    """Serve the information page with disaster management resources."""
+    return send_file('info.html')
+
+
 @app.route('/chat', methods=['POST'])
 def chat():
     """
