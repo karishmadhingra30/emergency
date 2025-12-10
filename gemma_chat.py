@@ -2,11 +2,21 @@
 """
 Gemma 3 Chatbot Wrapper via Ollama
 Provides crisis first-aid assistance for India mountain emergencies
+Enhanced with PDF-based RAG retrieval
 """
 
 import ollama
+import os
 from typing import List, Dict, Optional
 from first_aid_knowledge import FIRST_AID_DATA
+
+# Try to import PDF processor for enhanced retrieval
+try:
+    from pdf_processor import VectorDatabase
+    HAS_VECTOR_DB = True
+except ImportError:
+    HAS_VECTOR_DB = False
+    print("⚠️  PDF vector database not available. Using static knowledge only.")
 
 
 class GemmaEmergencyChat:
@@ -23,6 +33,19 @@ class GemmaEmergencyChat:
         """
         self.model_name = model_name
         self.system_prompt = self._build_system_prompt()
+        self.vector_db = None
+        self.use_pdf_retrieval = False
+
+        # Try to load vector database if available
+        if HAS_VECTOR_DB and os.path.exists("vectordb/vectordb.pkl"):
+            try:
+                print("📚 Loading PDF vector database...")
+                self.vector_db = VectorDatabase.load()
+                self.use_pdf_retrieval = True
+                print(f"✓ Loaded vector database with {len(self.vector_db.chunks)} chunks")
+            except Exception as e:
+                print(f"⚠️  Could not load vector database: {e}")
+                self.use_pdf_retrieval = False
 
     def _build_system_prompt(self) -> str:
         """Build the system prompt for Gemma."""
@@ -30,17 +53,16 @@ class GemmaEmergencyChat:
 
 **Your Role:**
 - Provide immediate, actionable first-aid guidance
-- Emphasize calling emergency services (108, 100, 1078) for serious situations
 - Give clear, step-by-step instructions
 - Be concise but thorough
-- Adapt to India-specific context (monsoon floods, mountain terrain, local emergency numbers)
+- Adapt to India-specific context (monsoon floods, mountain terrain)
 
 **Critical Rules:**
-1. ALWAYS recommend calling emergency services (108) for life-threatening situations
-2. Provide science-based medical advice only - NO traditional remedies for emergencies
-3. Be clear about when professional medical help is required
-4. For shelter queries, acknowledge that you'll help find nearest locations
-5. Keep responses practical and action-oriented
+1. Provide science-based medical advice only - NO traditional remedies for emergencies
+2. Be clear about when professional medical help is required
+3. For shelter queries, acknowledge that you'll help find nearest locations
+4. Keep responses practical and action-oriented
+5. Remind users to seek professional medical care when possible
 
 **Context:** You're assisting people in mountain regions of India during potential flood, landslide, or altitude emergencies.
 
@@ -48,7 +70,7 @@ Be compassionate but direct. Lives may depend on your guidance."""
 
     def retrieve_relevant_knowledge(self, user_message: str, top_k: int = 3) -> List[str]:
         """
-        Simple keyword-based retrieval from first aid knowledge base.
+        Enhanced retrieval combining static knowledge and PDF vector search.
 
         Args:
             user_message: User's query
@@ -60,7 +82,20 @@ Be compassionate but direct. Lives may depend on your guidance."""
         message_lower = user_message.lower()
         relevant_chunks = []
 
-        # Define keyword mappings to first aid data
+        # 1. Retrieve from PDF vector database (if available)
+        pdf_chunks = []
+        if self.use_pdf_retrieval and self.vector_db:
+            try:
+                pdf_results = self.vector_db.search(user_message, k=top_k)
+                for result in pdf_results:
+                    # Use only the text content, no source citations in user-facing responses
+                    text = result['text']
+                    pdf_chunks.append(text)
+            except Exception as e:
+                print(f"⚠️  PDF retrieval error: {e}")
+
+        # 2. Retrieve from static knowledge base (original implementation)
+        static_chunks = []
         keyword_mappings = {
             "bleeding": ["bleeding", "blood", "cut", "wound"],
             "burns": ["burn", "burnt", "scald", "fire"],
@@ -79,8 +114,7 @@ Be compassionate but direct. Lives may depend on your guidance."""
             "sprain": ["sprain", "twisted", "ankle"],
             "flood_safety": ["flood", "water rising", "flash flood", "monsoon"],
             "flood_injuries": ["waterborne", "leptospirosis", "contaminated water"],
-            "mountain_emergencies": ["altitude", "landslide", "lost", "stranded", "mountain"],
-            "indian_emergency_numbers": ["emergency number", "helpline", "who to call", "ambulance number"]
+            "mountain_emergencies": ["altitude", "landslide", "lost", "stranded", "mountain"]
         }
 
         # Find matching topics
@@ -94,9 +128,14 @@ Be compassionate but direct. Lives may depend on your guidance."""
             if topic in FIRST_AID_DATA:
                 data = FIRST_AID_DATA[topic]
                 chunk = self._format_knowledge_chunk(topic, data)
-                relevant_chunks.append(chunk)
+                static_chunks.append(chunk)
 
-        return relevant_chunks
+        # 3. Combine PDF and static knowledge
+        # Priority: PDF chunks first (more detailed), then static knowledge
+        relevant_chunks = pdf_chunks + static_chunks
+
+        # Limit to top_k total chunks
+        return relevant_chunks[:top_k * 2]  # Allow slightly more chunks when combining sources
 
     def _format_knowledge_chunk(self, topic: str, data: Dict) -> str:
         """Format a knowledge chunk for context."""
@@ -141,7 +180,11 @@ Be compassionate but direct. Lives may depend on your guidance."""
         # Build context
         context = ""
         if knowledge_chunks:
-            context = "\n**Relevant First Aid Knowledge:**\n\n"
+            context = "\n**Relevant First Aid Knowledge:**\n"
+            if self.use_pdf_retrieval:
+                context += "(Enhanced with PDF medical guidelines)\n\n"
+            else:
+                context += "\n"
             context += "\n\n".join(knowledge_chunks)
             context += "\n\n---\n\n"
 
@@ -172,17 +215,16 @@ Be compassionate but direct. Lives may depend on your guidance."""
             return response['message']['content']
 
         except Exception as e:
-            # Fallback error message
-            error_msg = f"I'm having trouble connecting to the AI model. Error: {str(e)}\n\n"
-            error_msg += "**Emergency Numbers (India):**\n"
-            error_msg += "📞 108 - Emergency Ambulance (Free)\n"
-            error_msg += "📞 100 - Police\n"
-            error_msg += "📞 1078 - Disaster Management\n\n"
+            # Log error for debugging but provide graceful fallback to user
+            print(f"⚠️  Chatbot error: {e}")
 
-            # If we have knowledge chunks, include them as fallback
+            # Provide knowledge base fallback
             if knowledge_chunks:
-                error_msg += "Here's some relevant information from our knowledge base:\n\n"
+                error_msg = "**First Aid Guidance:**\n\n"
                 error_msg += "\n\n".join(knowledge_chunks)
+                error_msg += "\n\n⚠️  Note: This information is from the offline knowledge base. Seek professional medical care when possible."
+            else:
+                error_msg = "⚠️  I'm currently unable to provide specific guidance. Please refer to basic first aid principles and seek professional medical care as soon as possible."
 
             return error_msg
 
@@ -220,13 +262,29 @@ def gemma_chat(user_message: str, user_location: Optional[Dict] = None,
         if not user_location:
             return [{"text": "📍 To find the nearest shelters, I need your location coordinates. Please provide them in the format: Latitude, Longitude (e.g., 30.324329, 78.0418)"}]
 
-        # Instead of importing shelter_manager (which causes circular import issues),
-        # we signal the frontend to call the /nearest-shelter endpoint
-        print(f"[DEBUG] gemma_chat - Shelter query detected with location: lat={user_location.get('latitude')}, lon={user_location.get('longitude')}")
-        return [{
-            "text": "🏥 Looking up nearest shelters for you...",
-            "custom": {"action": "find_nearest_shelter"}
-        }]
+        # Import here to avoid circular dependency
+        from app import shelter_manager
+
+        # Find nearest shelters
+        nearest_shelters = shelter_manager.find_nearest_shelters(
+            user_location.get('latitude'),
+            user_location.get('longitude'),
+            limit=5
+        )
+
+        if not nearest_shelters:
+            return [{"text": "I couldn't find any shelters in the database. The shelter database may need to be updated."}]
+
+        # Format response
+        response = "🏥 **Nearest Shelters** (ordered by distance):\n\n"
+        for idx, shelter in enumerate(nearest_shelters, 1):
+            response += f"**{idx}. {shelter['name']}**\n"
+            response += f"   📍 Distance: {shelter['distance_km']} km ({shelter['distance_miles']} miles)\n"
+            response += f"   🏢 Type: {shelter['type'].replace('_', ' ').title()}\n"
+            response += f"   📮 Address: {shelter['address']}\n"
+            response += f"   📊 Status: {shelter['operational_status']}\n\n"
+
+        return [{"text": response}]
 
     # For non-shelter queries, use Gemma chatbot
     chatbot = get_gemma_chat(model_name)

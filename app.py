@@ -141,6 +141,30 @@ def map_page():
     return send_file('map_with_chat.html')
 
 
+@app.route('/info')
+def info_page():
+    """Serve the information page with disaster management resources."""
+    return send_file('info.html')
+
+
+@app.route('/medical-info')
+def medical_info_page():
+    """Serve the medical information page."""
+    return send_file('medical_info.html')
+
+
+@app.route('/emergency-contacts')
+def emergency_contacts_page():
+    """Serve the emergency contacts page."""
+    return send_file('emergency_contacts.html')
+
+
+@app.route('/test-routes')
+def test_routes_page():
+    """Serve the route testing page."""
+    return send_file('test_routes.html')
+
+
 @app.route('/chat', methods=['POST'])
 def chat():
     """

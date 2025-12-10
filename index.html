@@ -2,139 +2,192 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Emergency Aid</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-            background-color: #EF233C;
+            background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
             color: white;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             padding: 20px;
             max-width: 100%;
         }
 
-        /* Header Section */
-        .header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 60px 20px 40px;
+        /* Header with Logo */
+        .app-header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding-top: 20px;
         }
 
-        .emergency-icon {
-            width: 140px;
-            height: 140px;
-            background-color: white;
-            border-radius: 50%;
+        .app-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+            background: white;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            font-size: 48px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
         }
 
-        .emergency-icon-inner {
-            width: 90px;
-            height: 90px;
-            border: 6px solid #EF233C;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
+        .app-title {
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
 
-        .exclamation {
-            font-size: 60px;
-            color: #EF233C;
-            font-weight: bold;
-            line-height: 1;
-        }
-
-        .title {
-            font-size: 32px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .subtitle {
-            font-size: 18px;
-            text-align: center;
+        .app-tagline {
+            font-size: 16px;
+            font-weight: 500;
             opacity: 0.95;
-            max-width: 400px;
-            line-height: 1.4;
+            line-height: 1.5;
+            max-width: 320px;
+            margin: 0 auto;
         }
 
-        /* Buttons Section */
-        .buttons-section {
+        /* Status Bar */
+        .status-bar {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background-color: #10B981;
+            border-radius: 50%;
+            animation: pulse-status 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-status {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Primary Action Buttons */
+        .primary-actions {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            padding: 0 20px;
-            margin-bottom: 40px;
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
-        .btn {
+        .action-btn {
             background-color: white;
-            color: #EF233C;
+            color: #DC2626;
             border: none;
+            border-radius: 16px;
+            padding: 24px 32px;
+            font-size: 22px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 20px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            min-height: 80px;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #FEE2E2;
             border-radius: 12px;
-            padding: 20px 30px;
+            flex-shrink: 0;
+        }
+
+        .action-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .action-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .action-title {
             font-size: 20px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .action-subtitle {
+            font-size: 14px;
+            font-weight: 500;
+            color: #DC2626;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        /* Secondary Actions */
+        .secondary-actions {
+            margin-top: auto;
+            padding-top: 20px;
+        }
+
+        .secondary-btn {
+            background-color: transparent;
+            color: white;
+            border: 3px solid white;
+            border-radius: 14px;
+            padding: 18px 24px;
+            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
             text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            min-height: 64px;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            color: white;
-            border: 3px solid white;
-        }
-
-        .btn-outline:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .icon {
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .secondary-btn:active {
+            background-color: rgba(255, 255, 255, 0.15);
         }
 
         /* SVG Icons */
@@ -155,102 +208,323 @@
             stroke-linecap: round;
         }
 
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 30px 20px 40px;
-            font-size: 18px;
-            font-weight: 500;
-        }
-
-        .emergency-hotline {
-            opacity: 0.95;
+        .phone-icon {
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         /* Responsive Design */
         @media (min-width: 768px) {
             .container {
-                max-width: 500px;
+                max-width: 480px;
                 margin: 0 auto;
             }
         }
 
         @media (max-height: 700px) {
-            .header {
-                padding: 40px 20px 30px;
+            .action-btn {
+                min-height: 70px;
+                padding: 20px 28px;
             }
+        }
 
-            .emergency-icon {
-                width: 110px;
-                height: 110px;
-                margin-bottom: 20px;
+        /* Accessibility - High Contrast Mode */
+        @media (prefers-contrast: high) {
+            .action-btn {
+                border: 2px solid #DC2626;
             }
+        }
 
-            .emergency-icon-inner {
-                width: 70px;
-                height: 70px;
+        /* Reduce Motion for Users Who Prefer It */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
             }
+        }
 
-            .exclamation {
-                font-size: 48px;
-            }
+        /* Menu Modal Overlay */
+        .menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            animation: fadeIn 0.2s ease;
+        }
 
-            .title {
-                font-size: 28px;
-            }
+        .menu-overlay.active {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
 
-            .subtitle {
-                font-size: 16px;
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .menu-modal {
+            background: white;
+            border-radius: 24px 24px 0 0;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .menu-header {
+            padding: 24px 20px 16px;
+            border-bottom: 2px solid #F3F4F6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #DC2626;
+        }
+
+        .menu-close {
+            background: #F3F4F6;
+            border: none;
+            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            color: #6B7280;
+            transition: all 0.2s ease;
+        }
+
+        .menu-close:active {
+            background: #E5E7EB;
+        }
+
+        .menu-items {
+            padding: 8px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 16px;
+            margin: 4px 0;
+            border-radius: 14px;
+            text-decoration: none;
+            color: #1F2937;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .menu-item:active {
+            background-color: #F3F4F6;
+        }
+
+        .menu-item-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border-radius: 14px;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .menu-item-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-item-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 2px;
+        }
+
+        .menu-item-subtitle {
+            font-size: 14px;
+            font-weight: 500;
+            color: #6B7280;
+        }
+
+        .menu-item-arrow {
+            color: #9CA3AF;
+            font-size: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <div class="emergency-icon">
-                <div class="emergency-icon-inner">
-                    <span class="exclamation">!</span>
-                </div>
-            </div>
-            <h1 class="title">Emergency Aid</h1>
-            <p class="subtitle">Quick access to help when you need it most</p>
+        <!-- App Header -->
+        <div class="app-header">
+            <div class="app-logo">🤝</div>
+            <h1 class="app-title">Emergency Aid</h1>
+            <p class="app-tagline">Your trusted companion for emergency situations, first aid guidance, and disaster preparedness</p>
         </div>
 
-        <div class="buttons-section">
-            <a href="/map?view=chat" class="btn">
-                <svg class="icon chat-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                First Aid Chat
+        <!-- Status Indicator -->
+        <div class="status-bar">
+            <span class="status-indicator"></span>
+            <span>Emergency Services Ready</span>
+        </div>
+
+        <!-- Primary Actions -->
+        <div class="primary-actions">
+            <a href="/map?view=chat" class="action-btn">
+                <div class="action-icon">
+                    <svg class="chat-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="action-content">
+                    <div class="action-title">First Aid Chat</div>
+                    <div class="action-subtitle">Get immediate guidance</div>
+                </div>
             </a>
 
-            <a href="/map?view=shelters" class="btn">
-                <svg class="icon location-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                </svg>
-                Find Shelters
+            <a href="/map?view=shelters" class="action-btn">
+                <div class="action-icon">
+                    <svg class="location-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                </div>
+                <div class="action-content">
+                    <div class="action-title">Find Shelters</div>
+                    <div class="action-subtitle">Locate nearest safe places</div>
+                </div>
             </a>
+        </div>
 
-            <button class="btn btn-outline" onclick="showMenu()">
-                <svg class="icon menu-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <!-- Secondary Actions -->
+        <div class="secondary-actions">
+            <button class="secondary-btn" onclick="showMenu()">
+                <svg class="menu-icon" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <line x1="3" y1="12" x2="21" y2="12"></line>
                     <line x1="3" y1="6" x2="21" y2="6"></line>
                     <line x1="3" y1="18" x2="21" y2="18"></line>
                 </svg>
-                Menu & Settings
+                More Options
             </button>
         </div>
+    </div>
 
-        <div class="footer">
-            <p class="emergency-hotline">Emergency Hotline: 911</p>
+    <!-- Menu Modal -->
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMenuOnOverlay(event)">
+        <div class="menu-modal">
+            <div class="menu-header">
+                <div class="menu-title">More Options</div>
+                <button class="menu-close" onclick="closeMenu()">✕</button>
+            </div>
+            <div class="menu-items">
+                <a href="/info" class="menu-item">
+                    <div class="menu-item-icon">ℹ️</div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-title">Emergency Information</div>
+                        <div class="menu-item-subtitle">Official disaster resources</div>
+                    </div>
+                    <div class="menu-item-arrow">›</div>
+                </a>
+
+                <a href="/medical-info" class="menu-item">
+                    <div class="menu-item-icon">💊</div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-title">Your Medical Information</div>
+                        <div class="menu-item-subtitle">Manage your health records</div>
+                    </div>
+                    <div class="menu-item-arrow">›</div>
+                </a>
+
+                <a href="/emergency-contacts" class="menu-item">
+                    <div class="menu-item-icon">📋</div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-title">Emergency Contacts</div>
+                        <div class="menu-item-subtitle">Manage your contacts</div>
+                    </div>
+                    <div class="menu-item-arrow">›</div>
+                </a>
+
+                <a href="#" class="menu-item" onclick="alert('Coming soon'); return false;">
+                    <div class="menu-item-icon">📍</div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-title">Share Location</div>
+                        <div class="menu-item-subtitle">Share your current location</div>
+                    </div>
+                    <div class="menu-item-arrow">›</div>
+                </a>
+
+                <a href="#" class="menu-item" onclick="alert('Coming soon'); return false;">
+                    <div class="menu-item-icon">⚙️</div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-title">Settings</div>
+                        <div class="menu-item-subtitle">App preferences</div>
+                    </div>
+                    <div class="menu-item-arrow">›</div>
+                </a>
+
+                <a href="#" class="menu-item" onclick="alert('Emergency Aid v1.0\nDeveloped to help during emergencies'); return false;">
+                    <div class="menu-item-icon">📱</div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-title">About</div>
+                        <div class="menu-item-subtitle">App information</div>
+                    </div>
+                    <div class="menu-item-arrow">›</div>
+                </a>
+            </div>
         </div>
     </div>
 
     <script>
         function showMenu() {
-            alert('Menu & Settings functionality coming soon!');
+            const overlay = document.getElementById('menuOverlay');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
+
+        function closeMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function closeMenuOnOverlay(event) {
+            // Only close if clicking directly on the overlay, not on the modal content
+            if (event.target.id === 'menuOverlay') {
+                closeMenu();
+            }
+        }
+
+        // Vibrate on button press for haptic feedback
+        document.querySelectorAll('.action-btn, .secondary-btn').forEach(button => {
+            button.addEventListener('touchstart', () => {
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(10);
+                }
+            });
+        });
     </script>
 </body>
 </html>

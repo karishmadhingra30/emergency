@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emergency Shelter & First Aid Assistant</title>
+    <title>Emergency Aid - Shelter & First Aid</title>
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -20,11 +20,13 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
             overflow: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* Header */
@@ -32,22 +34,49 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
             color: white;
             padding: 15px 20px;
             z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-content {
+            flex: 1;
         }
 
         .header h1 {
-            font-size: 24px;
-            font-weight: 600;
+            font-size: 22px;
+            font-weight: 700;
         }
 
         .header p {
-            font-size: 12px;
-            margin-top: 5px;
-            opacity: 0.9;
+            font-size: 13px;
+            margin-top: 4px;
+            opacity: 0.95;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .back-button:active {
+            background: rgba(255, 255, 255, 0.3);
         }
 
         /* Map Container */
@@ -81,9 +110,9 @@
         }
 
         .chat-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
             color: white;
-            padding: 15px 20px;
+            padding: 18px 20px;
             border-radius: 15px 15px 0 0;
             display: flex;
             justify-content: space-between;
@@ -93,7 +122,7 @@
 
         .chat-header h3 {
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .chat-toggle {
@@ -162,7 +191,7 @@
         }
 
         .message.user .message-content {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
             color: white;
             border-bottom-right-radius: 4px;
         }
@@ -190,22 +219,23 @@
         }
 
         .chat-input:focus {
-            border-color: #667eea;
+            border-color: #DC2626;
         }
 
         .send-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 14px 28px;
             border-radius: 25px;
             cursor: pointer;
-            font-weight: 600;
-            transition: transform 0.2s;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
         }
 
-        .send-button:hover {
-            transform: scale(1.05);
+        .send-button:active {
+            transform: scale(0.98);
         }
 
         .send-button:disabled {
@@ -213,6 +243,36 @@
             cursor: not-allowed;
         }
 
+        /* Location Controls */
+        .location-controls {
+            position: absolute;
+            top: 90px;
+            left: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .location-button {
+            background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            margin-bottom: 8px;
+            width: 100%;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+            font-size: 15px;
+        }
+
+        .location-button:active {
+            transform: scale(0.98);
+        }
         /* Location Controls - REMOVED */
 
         /* Legend */
@@ -299,11 +359,21 @@
 </head>
 <body>
     <div class="header">
-        <h1>🏥 Emergency Shelter & First Aid Assistant</h1>
-        <p>Find nearby shelters and get first aid information during emergencies</p>
+        <div class="header-content">
+            <h1>🚨 Emergency Aid</h1>
+            <p>Shelter locations and first aid assistance</p>
+        </div>
+        <a href="/" class="back-button">
+            ← Home
+        </a>
     </div>
 
     <div id="map"></div>
+
+    <div class="location-controls">
+        <button class="location-button" onclick="getMyLocation()">📍 Get My Location</button>
+        <p style="font-size: 12px; margin-top: 10px; color: #666;">Or click on the map to set location</p>
+    </div>
 
     <div class="legend">
         <h4>Map Legend</h4>
