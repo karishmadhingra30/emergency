@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Medical Information - Emergency Aid</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            padding-bottom: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #EF233C 0%, #DC2626 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            text-decoration: none;
+        }
+
+        .back-btn:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .intro-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .intro-card h2 {
+            color: #EF233C;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .intro-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .warning-box {
+            background: #fff4e6;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .warning-box p {
+            color: #92400e;
+            font-size: 14px;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-card h3 {
+            color: #EF233C;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #EF233C;
+        }
+
+        .info-display {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .info-value.empty {
+            color: #999;
+            font-style: italic;
+        }
+
+        .edit-btn, .save-btn {
+            background: linear-gradient(135deg, #EF233C 0%, #DC2626 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .edit-btn:active, .save-btn:active {
+            transform: scale(0.98);
+        }
+
+        .cancel-btn {
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .cancel-btn:active {
+            background: #d0d0d0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <a href="/" class="back-btn">←</a>
+            <h1>💊 Medical Information</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="intro-card">
+            <h2>Your Medical Profile</h2>
+            <p>Store critical medical information that emergency responders might need. All data is stored locally on your device and works offline.</p>
+            <div class="warning-box">
+                <p><strong>⚠️ Important:</strong> This information is stored only on your device. Make sure to back it up regularly.</p>
+            </div>
+        </div>
+
+        <!-- Basic Information -->
+        <div class="info-card">
+            <h3>🩸 Basic Information</h3>
+            <div id="basicView">
+                <div class="info-display">
+                    <div class="info-label">Blood Type</div>
+                    <div class="info-value" id="displayBloodType">Not specified</div>
+                </div>
+                <div class="info-display">
+                    <div class="info-label">Date of Birth</div>
+                    <div class="info-value" id="displayDOB">Not specified</div>
+                </div>
+                <div class="info-display">
+                    <div class="info-label">Height</div>
+                    <div class="info-value" id="displayHeight">Not specified</div>
+                </div>
+                <div class="info-display">
+                    <div class="info-label">Weight</div>
+                    <div class="info-value" id="displayWeight">Not specified</div>
+                </div>
+                <button class="edit-btn" onclick="editSection('basic')">Edit Basic Info</button>
+            </div>
+            <div id="basicEdit" class="hidden">
+                <div class="form-group">
+                    <label class="form-label">Blood Type</label>
+                    <select class="form-select" id="bloodType">
+                        <option value="">Select...</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date of Birth</label>
+                    <input type="date" class="form-input" id="dob">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Height (cm)</label>
+                    <input type="number" class="form-input" id="height" placeholder="e.g., 170">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Weight (kg)</label>
+                    <input type="number" class="form-input" id="weight" placeholder="e.g., 70">
+                </div>
+                <button class="save-btn" onclick="saveSection('basic')">Save Changes</button>
+                <button class="cancel-btn" onclick="cancelEdit('basic')">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Allergies -->
+        <div class="info-card">
+            <h3>🚫 Allergies</h3>
+            <div id="allergiesView">
+                <div class="info-display">
+                    <div class="info-label">Known Allergies</div>
+                    <div id="displayAllergies" class="info-value">No allergies recorded</div>
+                </div>
+                <button class="edit-btn" onclick="editSection('allergies')">Edit Allergies</button>
+            </div>
+            <div id="allergiesEdit" class="hidden">
+                <div class="form-group">
+                    <label class="form-label">Allergies (one per line)</label>
+                    <textarea class="form-textarea" id="allergies" placeholder="e.g., Penicillin&#10;Peanuts&#10;Latex"></textarea>
+                </div>
+                <button class="save-btn" onclick="saveSection('allergies')">Save Changes</button>
+                <button class="cancel-btn" onclick="cancelEdit('allergies')">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Medications -->
+        <div class="info-card">
+            <h3>💊 Current Medications</h3>
+            <div id="medicationsView">
+                <div class="info-display">
+                    <div class="info-label">Medications</div>
+                    <div id="displayMedications" class="info-value">No medications recorded</div>
+                </div>
+                <button class="edit-btn" onclick="editSection('medications')">Edit Medications</button>
+            </div>
+            <div id="medicationsEdit" class="hidden">
+                <div class="form-group">
+                    <label class="form-label">Medications (one per line)</label>
+                    <textarea class="form-textarea" id="medications" placeholder="e.g., Aspirin 100mg daily&#10;Insulin 10 units twice daily"></textarea>
+                </div>
+                <button class="save-btn" onclick="saveSection('medications')">Save Changes</button>
+                <button class="cancel-btn" onclick="cancelEdit('medications')">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Medical Conditions -->
+        <div class="info-card">
+            <h3>🏥 Medical Conditions</h3>
+            <div id="conditionsView">
+                <div class="info-display">
+                    <div class="info-label">Conditions</div>
+                    <div id="displayConditions" class="info-value">No conditions recorded</div>
+                </div>
+                <button class="edit-btn" onclick="editSection('conditions')">Edit Conditions</button>
+            </div>
+            <div id="conditionsEdit" class="hidden">
+                <div class="form-group">
+                    <label class="form-label">Medical Conditions (one per line)</label>
+                    <textarea class="form-textarea" id="conditions" placeholder="e.g., Diabetes Type 2&#10;High Blood Pressure&#10;Asthma"></textarea>
+                </div>
+                <button class="save-btn" onclick="saveSection('conditions')">Save Changes</button>
+                <button class="cancel-btn" onclick="cancelEdit('conditions')">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Additional Notes -->
+        <div class="info-card">
+            <h3>📝 Additional Notes</h3>
+            <div id="notesView">
+                <div class="info-display">
+                    <div class="info-label">Notes</div>
+                    <div id="displayNotes" class="info-value">No additional notes</div>
+                </div>
+                <button class="edit-btn" onclick="editSection('notes')">Edit Notes</button>
+            </div>
+            <div id="notesEdit" class="hidden">
+                <div class="form-group">
+                    <label class="form-label">Additional Medical Information</label>
+                    <textarea class="form-textarea" id="notes" placeholder="Any other important medical information..."></textarea>
+                </div>
+                <button class="save-btn" onclick="saveSection('notes')">Save Changes</button>
+                <button class="cancel-btn" onclick="cancelEdit('notes')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let medicalInfo = JSON.parse(localStorage.getItem('medicalInformation') || '{}');
+
+        function loadData() {
+            // Basic Info
+            document.getElementById('displayBloodType').textContent = medicalInfo.bloodType || 'Not specified';
+            document.getElementById('displayBloodType').className = medicalInfo.bloodType ? 'info-value' : 'info-value empty';
+
+            document.getElementById('displayDOB').textContent = medicalInfo.dob || 'Not specified';
+            document.getElementById('displayDOB').className = medicalInfo.dob ? 'info-value' : 'info-value empty';
+
+            document.getElementById('displayHeight').textContent = medicalInfo.height ? `${medicalInfo.height} cm` : 'Not specified';
+            document.getElementById('displayHeight').className = medicalInfo.height ? 'info-value' : 'info-value empty';
+
+            document.getElementById('displayWeight').textContent = medicalInfo.weight ? `${medicalInfo.weight} kg` : 'Not specified';
+            document.getElementById('displayWeight').className = medicalInfo.weight ? 'info-value' : 'info-value empty';
+
+            // Allergies
+            const allergiesEl = document.getElementById('displayAllergies');
+            if (medicalInfo.allergies) {
+                allergiesEl.innerHTML = `<div class="tag-list">${medicalInfo.allergies.split('\n').filter(a => a.trim()).map(a => `<span class="tag">${a.trim()}</span>`).join('')}</div>`;
+                allergiesEl.className = 'info-value';
+            } else {
+                allergiesEl.textContent = 'No allergies recorded';
+                allergiesEl.className = 'info-value empty';
+            }
+
+            // Medications
+            const medsEl = document.getElementById('displayMedications');
+            if (medicalInfo.medications) {
+                medsEl.innerHTML = medicalInfo.medications.split('\n').filter(m => m.trim()).map(m => `• ${m.trim()}`).join('<br>');
+                medsEl.className = 'info-value';
+            } else {
+                medsEl.textContent = 'No medications recorded';
+                medsEl.className = 'info-value empty';
+            }
+
+            // Conditions
+            const condEl = document.getElementById('displayConditions');
+            if (medicalInfo.conditions) {
+                condEl.innerHTML = medicalInfo.conditions.split('\n').filter(c => c.trim()).map(c => `• ${c.trim()}`).join('<br>');
+                condEl.className = 'info-value';
+            } else {
+                condEl.textContent = 'No conditions recorded';
+                condEl.className = 'info-value empty';
+            }
+
+            // Notes
+            const notesEl = document.getElementById('displayNotes');
+            if (medicalInfo.notes) {
+                notesEl.textContent = medicalInfo.notes;
+                notesEl.className = 'info-value';
+            } else {
+                notesEl.textContent = 'No additional notes';
+                notesEl.className = 'info-value empty';
+            }
+        }
+
+        function editSection(section) {
+            document.getElementById(`${section}View`).classList.add('hidden');
+            document.getElementById(`${section}Edit`).classList.remove('hidden');
+
+            // Load current values into form
+            if (section === 'basic') {
+                document.getElementById('bloodType').value = medicalInfo.bloodType || '';
+                document.getElementById('dob').value = medicalInfo.dob || '';
+                document.getElementById('height').value = medicalInfo.height || '';
+                document.getElementById('weight').value = medicalInfo.weight || '';
+            } else if (section === 'allergies') {
+                document.getElementById('allergies').value = medicalInfo.allergies || '';
+            } else if (section === 'medications') {
+                document.getElementById('medications').value = medicalInfo.medications || '';
+            } else if (section === 'conditions') {
+                document.getElementById('conditions').value = medicalInfo.conditions || '';
+            } else if (section === 'notes') {
+                document.getElementById('notes').value = medicalInfo.notes || '';
+            }
+        }
+
+        function saveSection(section) {
+            if (section === 'basic') {
+                medicalInfo.bloodType = document.getElementById('bloodType').value;
+                medicalInfo.dob = document.getElementById('dob').value;
+                medicalInfo.height = document.getElementById('height').value;
+                medicalInfo.weight = document.getElementById('weight').value;
+            } else if (section === 'allergies') {
+                medicalInfo.allergies = document.getElementById('allergies').value;
+            } else if (section === 'medications') {
+                medicalInfo.medications = document.getElementById('medications').value;
+            } else if (section === 'conditions') {
+                medicalInfo.conditions = document.getElementById('conditions').value;
+            } else if (section === 'notes') {
+                medicalInfo.notes = document.getElementById('notes').value;
+            }
+
+            localStorage.setItem('medicalInformation', JSON.stringify(medicalInfo));
+            loadData();
+            cancelEdit(section);
+        }
+
+        function cancelEdit(section) {
+            document.getElementById(`${section}View`).classList.remove('hidden');
+            document.getElementById(`${section}Edit`).classList.add('hidden');
+        }
+
+        // Initial load
+        loadData();
+    </script>
+</body>
+</html>

@@ -129,6 +129,18 @@ def map_page():
     return send_file('map_with_chat.html')
 
 
+@app.route('/emergency-contacts')
+def emergency_contacts():
+    """Serve the emergency contacts page."""
+    return send_file('emergency_contacts.html')
+
+
+@app.route('/medical-info')
+def medical_info():
+    """Serve the medical information page."""
+    return send_file('medical_info.html')
+
+
 @app.route('/chat', methods=['POST'])
 def chat():
     """

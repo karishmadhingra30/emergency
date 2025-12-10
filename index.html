@@ -391,14 +391,14 @@
                     <span class="menu-item-icon">ℹ️</span>
                     <span>Emergency Information</span>
                 </a>
-                <button class="menu-item" onclick="showEmergencyContacts()">
+                <a href="/emergency-contacts" class="menu-item">
                     <span class="menu-item-icon">📋</span>
                     <span>Emergency Contacts</span>
-                </button>
-                <button class="menu-item" onclick="showMedicalInfo()">
+                </a>
+                <a href="/medical-info" class="menu-item">
                     <span class="menu-item-icon">💊</span>
                     <span>Medical Information</span>
-                </button>
+                </a>
                 <button class="menu-item" onclick="shareLocation()">
                     <span class="menu-item-icon">📍</span>
                     <span>Share Location</span>
@@ -434,25 +434,6 @@
         }
 
         // Menu Item Functions
-        function showEmergencyContacts() {
-            alert('Emergency Contacts\n\n' +
-                'Local Emergency: 911\n' +
-                'Poison Control: 1-800-222-1222\n' +
-                'Disaster Distress: 1-800-985-5990\n\n' +
-                'Add your personal emergency contacts in Settings.');
-        }
-
-        function showMedicalInfo() {
-            alert('Medical Information\n\n' +
-                'Store your critical medical information:\n' +
-                '• Blood type\n' +
-                '• Allergies\n' +
-                '• Current medications\n' +
-                '• Emergency contacts\n' +
-                '• Medical conditions\n\n' +
-                'Feature coming soon!');
-        }
-
         function shareLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
