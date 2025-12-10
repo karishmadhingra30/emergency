@@ -613,11 +613,6 @@
                             handleCustomAction(response.custom);
                         }
                     });
-
-                    // If asking about nearest shelter and we have location
-                    if (message.toLowerCase().includes('nearest') && message.toLowerCase().includes('shelter') && userLocation) {
-                        findNearestShelter();
-                    }
                 } else {
                     addBotMessage("I'm having trouble connecting. Please make sure the backend server is running.");
                 }
@@ -718,6 +713,13 @@
 
         function handleCustomAction(action) {
             // Custom action handler - can be extended as needed
+            if (action.action === 'find_nearest_shelter') {
+                // Call the shelter lookup function
+                findNearestShelter();
+            } else if (action.action === 'request_location') {
+                // Could prompt user for location, but currently handled via chat
+                console.log('Location requested');
+            }
         }
 
         // Initialize
