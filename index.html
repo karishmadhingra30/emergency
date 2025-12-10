@@ -163,6 +163,122 @@
             opacity: 0.9;
         }
 
+        /* Menu Overlay */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .menu-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .menu-content {
+            background-color: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .menu-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #EF233C;
+        }
+
+        .close-menu {
+            background: none;
+            border: none;
+            font-size: 32px;
+            color: #666;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .close-menu:active {
+            background-color: #f0f0f0;
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .menu-item {
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 12px;
+            padding: 18px 20px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .menu-item:active {
+            background-color: #e9ecef;
+            transform: scale(0.98);
+        }
+
+        .menu-item-icon {
+            font-size: 24px;
+            width: 30px;
+            text-align: center;
+        }
+
         /* Responsive Design */
         @media (min-width: 768px) {
             .container {
@@ -263,20 +379,129 @@
         </div>
     </div>
 
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMenuOnOverlay(event)">
+        <div class="menu-content">
+            <div class="menu-header">
+                <h2 class="menu-title">Menu & Settings</h2>
+                <button class="close-menu" onclick="closeMenu()">×</button>
+            </div>
+            <div class="menu-items">
+                <a href="/map?view=info" class="menu-item">
+                    <span class="menu-item-icon">ℹ️</span>
+                    <span>Emergency Information</span>
+                </a>
+                <button class="menu-item" onclick="showEmergencyContacts()">
+                    <span class="menu-item-icon">📋</span>
+                    <span>Emergency Contacts</span>
+                </button>
+                <button class="menu-item" onclick="showMedicalInfo()">
+                    <span class="menu-item-icon">💊</span>
+                    <span>Medical Information</span>
+                </button>
+                <button class="menu-item" onclick="shareLocation()">
+                    <span class="menu-item-icon">📍</span>
+                    <span>Share Location</span>
+                </button>
+                <button class="menu-item" onclick="showSettings()">
+                    <span class="menu-item-icon">⚙️</span>
+                    <span>Settings</span>
+                </button>
+                <button class="menu-item" onclick="showAbout()">
+                    <span class="menu-item-icon">ℹ️</span>
+                    <span>About</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Menu Functions
         function showMenu() {
-            const options = [
-                '📋 Emergency Contacts',
-                '💊 Medical Information',
-                '⚙️ Settings',
-                '📍 Share Location',
-                'ℹ️ About'
-            ].join('\n');
-            alert('Menu Options:\n\n' + options + '\n\n(Coming soon)');
+            document.getElementById('menuOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            document.getElementById('menuOverlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function closeMenuOnOverlay(event) {
+            if (event.target.id === 'menuOverlay') {
+                closeMenu();
+            }
+        }
+
+        // Menu Item Functions
+        function showEmergencyContacts() {
+            alert('Emergency Contacts\n\n' +
+                'Local Emergency: 911\n' +
+                'Poison Control: 1-800-222-1222\n' +
+                'Disaster Distress: 1-800-985-5990\n\n' +
+                'Add your personal emergency contacts in Settings.');
+        }
+
+        function showMedicalInfo() {
+            alert('Medical Information\n\n' +
+                'Store your critical medical information:\n' +
+                '• Blood type\n' +
+                '• Allergies\n' +
+                '• Current medications\n' +
+                '• Emergency contacts\n' +
+                '• Medical conditions\n\n' +
+                'Feature coming soon!');
+        }
+
+        function shareLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const lat = position.coords.latitude.toFixed(6);
+                        const lon = position.coords.longitude.toFixed(6);
+                        const locationText = `My location: ${lat}, ${lon}\nhttps://maps.google.com/?q=${lat},${lon}`;
+
+                        if (navigator.share) {
+                            navigator.share({
+                                title: 'My Emergency Location',
+                                text: locationText
+                            });
+                        } else {
+                            alert('Your Location:\n\n' + locationText + '\n\nCopy this to share with emergency contacts.');
+                        }
+                    },
+                    error => {
+                        alert('Could not access your location. Please enable location services.');
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by your device.');
+            }
+        }
+
+        function showSettings() {
+            alert('Settings\n\n' +
+                'Configure app preferences:\n' +
+                '• Language\n' +
+                '• Notifications\n' +
+                '• Data storage\n' +
+                '• Emergency contacts\n\n' +
+                'Feature coming soon!');
+        }
+
+        function showAbout() {
+            alert('Emergency Aid\n\n' +
+                'Version: 1.0\n' +
+                'Offline-first emergency assistance app\n\n' +
+                'Features:\n' +
+                '• First Aid Chat - AI-powered medical guidance\n' +
+                '• Shelter Locator - Find nearby safe places\n' +
+                '• Works completely offline\n\n' +
+                'For emergencies, always contact professional help.');
         }
 
         // Vibrate on button press for haptic feedback
-        document.querySelectorAll('.btn').forEach(button => {
+        document.querySelectorAll('.btn, .menu-item').forEach(button => {
             button.addEventListener('touchstart', () => {
                 if ('vibrate' in navigator) {
                     navigator.vibrate(10);
@@ -293,6 +518,13 @@
             }
             lastTouchEnd = now;
         }, false);
+
+        // Close menu on escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeMenu();
+            }
+        });
     </script>
 </body>
 </html>
