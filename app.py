@@ -125,8 +125,8 @@ class ShelterManager:
         return result
 
 
-# Initialize shelter manager
-shelter_manager = ShelterManager()
+# Initialize shelter manager (will be replaced with loaded version below)
+shelter_manager = None
 
 
 @app.route('/')
@@ -316,14 +316,27 @@ def find_latest_shelter_file():
     return None
 
 
-if __name__ == '__main__':
-    # Try to auto-load shelter data
+# Auto-load shelter data at module level (not just in main block)
+# This ensures the data is loaded even when imported by other modules
+def _initialize_shelter_manager():
+    """Initialize shelter manager with data."""
     shelter_file = find_latest_shelter_file()
+    manager = ShelterManager()
     if shelter_file:
-        print(f"Auto-loading shelter data from: {shelter_file}")
-        shelter_manager.load_shelters_from_excel(shelter_file)
+        print(f"[INFO] Auto-loading shelter data from: {shelter_file}")
+        manager.load_shelters_from_excel(shelter_file)
+        print(f"[INFO] Shelter manager initialized with {len(manager.shelters)} shelters")
     else:
-        print("No shelter data file found. You can load it via /load-shelters endpoint.")
+        print("[WARNING] No shelter data file found. You can load it via /load-shelters endpoint.")
+    return manager
+
+
+# Initialize shelter manager with data at module load time
+shelter_manager = _initialize_shelter_manager()
+
+
+if __name__ == '__main__':
+    pass
 
     print("\n" + "="*60)
     print("Emergency Shelter Chatbot Backend")
