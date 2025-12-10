@@ -31,6 +31,42 @@
             max-width: 100%;
         }
 
+        /* Header with Logo */
+        .app-header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding-top: 20px;
+        }
+
+        .app-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-title {
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .app-tagline {
+            font-size: 16px;
+            font-weight: 500;
+            opacity: 0.95;
+            line-height: 1.5;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
         /* Status Bar */
         .status-bar {
             background-color: rgba(0, 0, 0, 0.2);
@@ -343,6 +379,13 @@
 </head>
 <body>
     <div class="container">
+        <!-- App Header -->
+        <div class="app-header">
+            <div class="app-logo">🚑</div>
+            <h1 class="app-title">Emergency Aid</h1>
+            <p class="app-tagline">Your trusted companion for emergency situations, first aid guidance, and disaster preparedness</p>
+        </div>
+
         <!-- Status Indicator -->
         <div class="status-bar">
             <span class="status-indicator"></span>
