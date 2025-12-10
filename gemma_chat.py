@@ -284,7 +284,8 @@ def gemma_chat(user_message: str, user_location: Optional[Dict] = None,
             response += f"   📮 Address: {shelter['address']}\n"
             response += f"   📊 Status: {shelter['operational_status']}\n\n"
 
-        return [{"text": response}]
+        # Include both text response and shelter data for map plotting
+        return [{"text": response, "shelters": nearest_shelters}]
 
     # For non-shelter queries, use Gemma chatbot
     chatbot = get_gemma_chat(model_name)
