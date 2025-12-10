@@ -165,6 +165,26 @@ def test_routes_page():
     return send_file('test_routes.html')
 
 
+def clean_nan_values(obj):
+    """
+    Recursively replace NaN values with None to ensure valid JSON.
+
+    Args:
+        obj: Object to clean (dict, list, or primitive)
+
+    Returns:
+        Cleaned object with NaN replaced by None
+    """
+    if isinstance(obj, dict):
+        return {key: clean_nan_values(value) for key, value in obj.items()}
+    elif isinstance(obj, list):
+        return [clean_nan_values(item) for item in obj]
+    elif isinstance(obj, float) and math.isnan(obj):
+        return None
+    else:
+        return obj
+
+
 @app.route('/chat', methods=['POST'])
 def chat():
     """
@@ -183,6 +203,9 @@ def chat():
 
         # Process message through Gemma chatbot
         bot_responses = gemma_chat(user_message, user_location)
+
+        # Clean NaN values to ensure valid JSON
+        bot_responses = clean_nan_values(bot_responses)
 
         return jsonify({
             'success': True,
