@@ -324,6 +324,135 @@
                 transition-duration: 0.01ms !important;
             }
         }
+
+        /* Menu Modal Overlay */
+        .menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .menu-overlay.active {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .menu-modal {
+            background: white;
+            border-radius: 24px 24px 0 0;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .menu-header {
+            padding: 24px 20px 16px;
+            border-bottom: 2px solid #F3F4F6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #DC2626;
+        }
+
+        .menu-close {
+            background: #F3F4F6;
+            border: none;
+            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            color: #6B7280;
+            transition: all 0.2s ease;
+        }
+
+        .menu-close:active {
+            background: #E5E7EB;
+        }
+
+        .menu-items {
+            padding: 8px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 16px;
+            margin: 4px 0;
+            border-radius: 14px;
+            text-decoration: none;
+            color: #1F2937;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .menu-item:active {
+            background-color: #F3F4F6;
+        }
+
+        .menu-item-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border-radius: 14px;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .menu-item-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-item-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 2px;
+        }
+
+        .menu-item-subtitle {
+            font-size: 14px;
+            font-weight: 500;
+            color: #6B7280;
+        }
+
+        .menu-item-arrow {
+            color: #9CA3AF;
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
@@ -372,14 +501,6 @@
 
         <!-- Secondary Actions -->
         <div class="secondary-actions">
-            <a href="/info" class="secondary-btn" style="margin-bottom: 16px;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                </svg>
-                Emergency Information
-            </a>
             <button class="secondary-btn" onclick="showMenu()">
                 <svg class="menu-icon" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -397,17 +518,88 @@
         </div>
     </div>
 
+    <!-- Menu Modal -->
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMenuOnOverlay(event)">
+        <div class="menu-modal" onclick="event.stopPropagation()">
+            <div class="menu-header">
+                <div class="menu-title">More Options</div>
+                <button class="menu-close" onclick="closeMenu()">✕</button>
+            </div>
+            <div class="menu-items">
+                <a href="/info" class="menu-item">
+                    <div class="menu-item-icon">ℹ️</div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-title">Emergency Information</div>
+                        <div class="menu-item-subtitle">Official disaster resources</div>
+                    </div>
+                    <div class="menu-item-arrow">›</div>
+                </a>
+
+                <a href="/medical-info" class="menu-item">
+                    <div class="menu-item-icon">💊</div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-title">Your Medical Information</div>
+                        <div class="menu-item-subtitle">Manage your health records</div>
+                    </div>
+                    <div class="menu-item-arrow">›</div>
+                </a>
+
+                <a href="#" class="menu-item" onclick="alert('Coming soon'); return false;">
+                    <div class="menu-item-icon">📋</div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-title">Emergency Contacts</div>
+                        <div class="menu-item-subtitle">Manage your contacts</div>
+                    </div>
+                    <div class="menu-item-arrow">›</div>
+                </a>
+
+                <a href="#" class="menu-item" onclick="alert('Coming soon'); return false;">
+                    <div class="menu-item-icon">📍</div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-title">Share Location</div>
+                        <div class="menu-item-subtitle">Share your current location</div>
+                    </div>
+                    <div class="menu-item-arrow">›</div>
+                </a>
+
+                <a href="#" class="menu-item" onclick="alert('Coming soon'); return false;">
+                    <div class="menu-item-icon">⚙️</div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-title">Settings</div>
+                        <div class="menu-item-subtitle">App preferences</div>
+                    </div>
+                    <div class="menu-item-arrow">›</div>
+                </a>
+
+                <a href="#" class="menu-item" onclick="alert('Emergency Aid v1.0\nDeveloped to help during emergencies'); return false;">
+                    <div class="menu-item-icon">📱</div>
+                    <div class="menu-item-content">
+                        <div class="menu-item-title">About</div>
+                        <div class="menu-item-subtitle">App information</div>
+                    </div>
+                    <div class="menu-item-arrow">›</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
     <script>
         function showMenu() {
-            // Future: Show menu with settings, emergency contacts, medical info, etc.
-            const options = [
-                '📋 Emergency Contacts',
-                '💊 Medical Information',
-                '⚙️ Settings',
-                '📍 Share Location',
-                'ℹ️ About'
-            ].join('\n');
-            alert('Menu Options:\n\n' + options + '\n\n(Coming soon)');
+            const overlay = document.getElementById('menuOverlay');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function closeMenuOnOverlay(event) {
+            if (event.target === event.currentTarget) {
+                closeMenu();
+            }
         }
 
         // Vibrate on button press for haptic feedback

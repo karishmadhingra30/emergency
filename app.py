@@ -147,6 +147,12 @@ def info_page():
     return send_file('info.html')
 
 
+@app.route('/medical-info')
+def medical_info_page():
+    """Serve the medical information page."""
+    return send_file('medical_info.html')
+
+
 @app.route('/chat', methods=['POST'])
 def chat():
     """
