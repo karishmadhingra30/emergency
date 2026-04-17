@@ -1,421 +1,58 @@
-# Crisis Shelter Locator & Offline Map Plotter
+# Emergency Response Prototype
 
-A comprehensive Python-based toolkit for emergency shelter management:
-1. **Shelter Locator**: Fetches potential shelter locations using Google Maps Places API
-2. **Offline Map Plotter**: Visualizes coordinates from Excel files on interactive offline-capable maps
+A working prototype of an emergency-response web app combining a chatbot (first-aid guidance and shelter lookup) with an interactive map. Built as an exploration of what a low-connectivity, multilingual disaster-response tool could look like.
 
-## Features
+This is an **early-stage prototype**, iterated on with AI assistance. It runs end-to-end, but the code reflects rapid exploration rather than a finished architecture. The architectural direction I'm taking it - a LangGraph-based agent with multiple tools and conditional routing - is described in [NEXT_STEPS.md](./NEXT_STEPS.md), with an initial sketch in [`agent_sketch.py`](./agent_sketch.py).
 
-### Emergency Chatbot (NEW - Gemma 3 via Ollama)
-- **AI-powered crisis assistance** using Gemma 3 model
-- **Offline-capable** emergency first-aid guidance
-- **Context-aware responses** with knowledge retrieval from first aid database
-- **India-specific** emergency numbers and mountain/flood safety information
-- **Interactive web interface** with map integration
+## Current State
 
-### Shelter Locator
-- Fetches locations of potential emergency shelters:
-  - Schools
-  - Police Stations
-  - Fire Stations
-- Exports data to Excel with multiple sheets for easy analysis
-- Configurable search location and radius
-- Includes location details: name, coordinates, address, ratings, and operational status
-- Automatic pagination to retrieve all available results
+- **Chatbot with first-aid RAG**: local Gemma model (via Ollama) answers emergency first-aid questions, grounded in a vector database built from curated first-aid PDFs in [`Docs/`](./Docs) (Red Cross, WHO, Indian Army, SAS Survival, snakebite protocols)
+- **Shelter lookup**: finds nearest shelters from an Excel dataset, returns distance-sorted results
+- **Interactive map**: Leaflet-based map that displays shelter locations and chatbot results together
+- **India-specific context**: emergency numbers (108, 100, 1078), mountain and flood safety guidance, snakebite-specific content
 
-### Offline Map Plotter (NEW)
-- **Read Excel files** with latitude/longitude coordinates
-- **Generate interactive HTML maps** using Leaflet.js and OpenStreetMap
-- **Works offline** after initial map tile load (or with local tile server)
-- **Color-coded markers** by category/type
-- **Interactive popups** with detailed location information
-- **Auto-zoom** to fit all markers
-- **No API key required** for viewing maps
+## Running it locally
 
-## Prerequisites
+Requires Python 3.9+, [Ollama](https://ollama.com) with the `gemma2:2b` model pulled, and (for shelter data generation) a Google Maps API key.
 
-- Python 3.7 or higher
-- Google Maps API Key with Places API enabled
-- **Ollama** (for chatbot functionality) - see Chatbot Setup below
-
-## Getting a Google Maps API Key
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select an existing one
-3. Enable the **Places API** for your project
-4. Go to **Credentials** and create an API key
-5. (Optional but recommended) Restrict your API key to only the Places API
-
-## Installation
-
-1. Clone this repository:
-   ```bash
-   git clone <repository-url>
-   cd emergency
-   ```
-
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Create a `.env` file from the example:
-   ```bash
-   cp .env.example .env
-   ```
-
-4. Edit `.env` and add your Google Maps API key:
-   ```
-   GOOGLE_MAPS_API_KEY=your_actual_api_key_here
-   SEARCH_LOCATION=40.7128,-74.0060
-   SEARCH_RADIUS=5000
-   ```
-
-## Configuration
-
-Edit the `.env` file to customize your search:
-
-- **GOOGLE_MAPS_API_KEY**: Your Google Maps API key (required)
-- **SEARCH_LOCATION**: Center point for search in `latitude,longitude` format
-  - Default: `40.7128,-74.0060` (New York City)
-- **SEARCH_RADIUS**: Search radius in meters (default: 5000m = 5km)
-  - Maximum recommended: 50000 (50km)
-
-### Common Location Coordinates
-
-- New York City: `40.7128,-74.0060`
-- Los Angeles: `34.0522,-118.2437`
-- Chicago: `41.8781,-87.6298`
-- Houston: `29.7604,-95.3698`
-- Phoenix: `33.4484,-112.0740`
-- Philadelphia: `39.9526,-75.1652`
-
-## Usage
-
-### Shelter Locator
-
-Run the shelter locator script:
-
-```bash
-python shelter_locator.py
-```
-
-The script will:
-1. Connect to Google Maps Places API
-2. Search for schools, police stations, and fire stations within the specified radius
-3. Export results to an Excel file named `shelters_YYYYMMDD_HHMMSS.xlsx`
-
-### Offline Map Plotter
-
-Generate an interactive map from your Excel file:
-
-```bash
-python offline_map_plotter.py your_file.xlsx
-```
-
-**Basic Examples:**
-```bash
-# Plot data from Excel file (auto-detects lat/lon columns)
-python offline_map_plotter.py shelters_20241114.xlsx
-
-# Specify custom output filename
-python offline_map_plotter.py shelters.xlsx --output my_map.html
-
-# Specify custom column names
-python offline_map_plotter.py data.xlsx --lat Latitude --lon Longitude --name Location
-
-# Specify sheet name and add custom title
-python offline_map_plotter.py data.xlsx --sheet "All Shelters" --title "Emergency Shelters Map"
-```
-
-**Command Line Options:**
-- `--sheet <name>` - Sheet name to read (default: first sheet)
-- `--lat <column>` - Latitude column name (default: 'latitude')
-- `--lon <column>` - Longitude column name (default: 'longitude')
-- `--name <column>` - Name/title column (default: 'name')
-- `--type <column>` - Type/category column for color coding (default: 'type')
-- `--output <file>` - Output HTML file name (default: 'offline_map.html')
-- `--title <title>` - Map title (default: 'Location Map')
-
-**Output:**
-- Creates an HTML file with an interactive map
-- Open the HTML file in any web browser (Chrome, Firefox, Safari, etc.)
-- Works offline after initial tile load (tiles are cached by browser)
-
-### Emergency Chatbot (Gemma 3 via Ollama)
-
-The chatbot provides AI-powered emergency assistance with first-aid guidance, shelter location, and crisis management information.
-
-#### Chatbot Setup
-
-**1. Install Ollama:**
-
-For Linux:
-```bash
-curl -fsSL https://ollama.com/install.sh | sh
-```
-
-For macOS:
-```bash
-brew install ollama
-```
-
-For Windows:
-Download and install from [ollama.com/download](https://ollama.com/download)
-
-**2. Install Gemma 3 Model:**
-
-After installing Ollama, pull the Gemma model:
-```bash
-ollama pull gemma2:2b
-```
-
-This downloads the Gemma 2 2B model (recommended for efficiency). For better quality responses, you can use larger models:
-```bash
-# Alternative: Larger model with better quality
-ollama pull gemma2:9b
-```
-
-**3. Verify Installation:**
-
-Test that Ollama is working:
-```bash
-ollama list  # Should show gemma2:2b in the list
-```
-
-**4. Start Ollama Service:**
-
-Ollama needs to be running as a service:
-```bash
-# On Linux/macOS
-ollama serve
-
-# Or on systemd-based Linux systems, it should start automatically
-```
-
-#### Running the Chatbot Backend
-
-Start the Flask backend server:
-```bash
-python app.py
-```
-
-The server will start on `http://localhost:8080` and display:
-```
-============================================================
-Emergency Shelter Chatbot Backend
-============================================================
-Flask server: http://localhost:8080
-Chatbot: Gemma 3 via Ollama
-Shelters loaded: <number>
-============================================================
-```
-
-#### Using the Chatbot
-
-1. Open your browser and go to `http://localhost:8080`
-2. The interactive map with chat interface will load
-3. Click "Get My Location" or click on the map to set your location
-4. Type your emergency question in the chat box
-
-**Example queries:**
-- "What should I do for severe bleeding?"
-- "Snake bite treatment"
-- "What to do in a flood?"
-- "Find nearest shelter"
-- "Emergency numbers in India"
-- "Altitude sickness symptoms"
-
-#### Chatbot Features
-
-- **Knowledge Retrieval**: Automatically retrieves relevant first-aid information from the knowledge base
-- **Context-Aware**: Uses your location to provide relevant shelter information
-- **India-Specific**: Includes Indian emergency numbers (108, 100, 1078) and local emergency protocols
-- **First-Aid Coverage**: CPR, bleeding, burns, fractures, snake bites, flood safety, mountain emergencies, and more
-- **Offline-Capable**: Once Gemma model is downloaded, works without internet (except for map tiles)
-
-#### Customizing the Model
-
-To use a different Gemma model, edit `gemma_chat.py`:
-```python
-# Default model
-gemma_chat(user_message, model_name="gemma2:2b")
-
-# Use larger model for better responses
-gemma_chat(user_message, model_name="gemma2:9b")
-```
-
-#### Troubleshooting Chatbot
-
-**Ollama Connection Error:**
-- Ensure Ollama service is running: `ollama serve`
-- Check if the model is installed: `ollama list`
-- Verify the service is accessible: `curl http://localhost:11434`
-
-**Model Not Found:**
-- Pull the model: `ollama pull gemma2:2b`
-- Check available models: `ollama list`
-
-**Slow Responses:**
-- The 2B model should be fast on most modern hardware
-- If too slow, ensure you have enough RAM (at least 4GB free)
-- Consider using a smaller model or upgrading hardware
-
-**Fallback Behavior:**
-- If Ollama is unavailable, the chatbot will return the raw knowledge base information
-- Emergency numbers and critical info are always accessible
-
-## Output Format
-
-The Excel file contains multiple sheets:
-
-1. **All Shelters**: Combined list of all locations
-2. **Schools**: Only school locations
-3. **Police Stations**: Only police station locations
-4. **Fire Stations**: Only fire station locations
-
-### Data Columns
-
-- **name**: Name of the facility
-- **type**: Type of shelter (schools/police_stations/fire_stations)
-- **latitude**: Latitude coordinate
-- **longitude**: Longitude coordinate
-- **address**: Street address or vicinity
-- **rating**: Google Maps rating (if available)
-- **user_ratings_total**: Number of user ratings
-- **operational_status**: Current operational status
-- **place_id**: Google Places unique identifier
-
-## Example Output
-
-```
-============================================================
-Crisis Shelter Locator
-============================================================
-API Key: ********************AbCd
-Location: 40.7128,-74.0060
-Radius: 5000m
-============================================================
-
-Searching for shelters around 40.7128,-74.0060 within 5000m radius...
-
-Fetching schools...
-Found 20 schools in this batch
-Total schools found: 20
-
-Fetching police_stations...
-Found 5 police_stations in this batch
-Total police_stations found: 5
-
-Fetching fire_stations...
-Found 8 fire_stations in this batch
-Total fire_stations found: 8
-
-Total shelters found: 33
-
-Data exported successfully to: shelters_20241114_123045.xlsx
-Total records: 33
-Breakdown:
-  - schools: 20
-  - police_stations: 5
-  - fire_stations: 8
-```
-
-## API Usage Notes
-
-- The Google Places API has usage limits and may incur costs
-- The free tier includes $200 monthly credit (as of 2024)
-- Nearby Search requests cost approximately $32 per 1000 requests
-- Each search can return up to 60 results (3 pages of 20)
-- Monitor your usage in the Google Cloud Console
-
-## Troubleshooting
-
-### "REQUEST_DENIED" Error
-
-- Verify your API key is correct in `.env`
-- Ensure Places API is enabled in Google Cloud Console
-- Check if your API key has proper restrictions
-
-### No Results Found
-
-- Verify the location coordinates are correct
-- Try increasing the search radius
-- Check if the location has the types of facilities you're searching for
-
-### Import Errors
-
-Make sure all dependencies are installed:
 ```bash
 pip install -r requirements.txt
+ollama pull gemma2:2b
+ollama serve          # in a separate terminal
+python app.py         # starts Flask server on :8080
 ```
 
-## Making Maps Fully Offline
+Then open `http://localhost:8080`.
 
-By default, the offline map plotter uses OpenStreetMap tiles from the internet. The map will work offline **after** you've loaded it once (tiles are cached by your browser), but for **completely offline** use without any internet connection, you have several options:
+## Limitations
 
-### Option 1: Save Complete Web Page (Easiest)
-1. Open the generated HTML map in your browser
-2. Pan and zoom around the area to load tiles
-3. Use your browser's "Save Page As" → "Webpage, Complete" to save all resources
-4. The saved page will work offline with the cached tiles
+- Not a production system - error handling, observability, and resilience are minimal
+- Not a finished agent - the current chatbot is a single-turn RAG loop, not a multi-step agent with tools
+- Not multilingual yet - Hindi-first support is in the roadmap, not the code
+- Not offline - Ollama runs locally but the map requires tiles
 
-### Option 2: Download Leaflet.js for Offline Use
-The HTML file currently loads Leaflet from a CDN. To make it fully offline:
+## Next Steps
 
-1. Download Leaflet.js and CSS:
-```bash
-mkdir -p offline_resources
-cd offline_resources
-wget https://unpkg.com/leaflet@1.9.4/dist/leaflet.css
-wget https://unpkg.com/leaflet@1.9.4/dist/leaflet.js
-wget https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png
-wget https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png
-```
+See [NEXT_STEPS.md](./NEXT_STEPS.md) for the architectural direction: a LangGraph agent that routes by disaster type, calls tools for evacuation zones / AQI / shelter capacity / seismic data, and synthesizes multi-source answers. [`agent_sketch.py`](./agent_sketch.py) is a minimal working skeleton of that direction.
 
-2. Modify the HTML file to reference local files instead of CDN links
+## Context
 
-### Option 3: Set Up Local Tile Server (Advanced)
-For true offline mapping with full pan/zoom capabilities:
+Built as a project for climate adaptation applications of LLM agents - specifically, how a low-connectivity emergency tool could serve users in disaster scenarios where the chatbot needs to do more than chat (look things up, combine sources, reason about what to do next).
 
-1. **Download map tiles** for your area using tools like:
-   - [TileMill](https://tilemill-project.github.io/tilemill/)
-   - [MapTiler](https://www.maptiler.com/)
-   - Manual download with scripts
+## Repo contents
 
-2. **Set up a simple tile server**:
-```bash
-# Example using Python's HTTP server
-python -m http.server 8080
-```
+- `app.py` - Flask backend serving the chatbot + map
+- `chatbot.py`, `gemma_chat.py` - chatbot logic and Ollama/Gemma integration
+- `shelter_locator.py` - Google Maps shelter data fetcher
+- `offline_map_plotter.py` - generates interactive Leaflet maps from Excel data
+- `pdf_processor.py` - builds the first-aid vector database from PDFs in `Docs/`
+- `first_aid_knowledge.py` - curated first-aid knowledge base
+- `map_with_chat.html`, `index.html`, etc. - frontend
+- `Docs/` - source first-aid PDFs (Red Cross, WHO, etc.)
+- `vectordb/` - generated RAG vector database
+- `shelters_downloaded.xlsx` - sample shelter dataset
+- `agent_sketch.py` - exploratory LangGraph agent skeleton (see NEXT_STEPS.md)
 
-3. Place tiles in the correct directory structure: `tiles/{z}/{x}/{y}.png`
+## Development note
 
-4. Run the map plotter with local tiles enabled (modify the script or use custom tile URL)
-
-### Option 4: Use Static Map Images
-If you don't need interactivity, you can generate static map images that are completely offline. Let me know if you need this functionality!
-
-## Future Enhancements
-
-Potential improvements for production use:
-- Add more shelter types (hospitals, community centers, hotels)
-- Implement geocoding for address-based searches
-- Add capacity estimation based on building size
-- Include accessibility information
-- Real-time availability status integration
-- Clustering for large datasets
-- Heatmap visualization
-- Distance/routing calculations between shelters
-- Export to KML/GeoJSON formats
-- Database storage instead of Excel
-- Multi-location batch processing
-- Mobile-responsive map interface
-
-## License
-
-MIT License - feel free to use and modify for your crisis management needs.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit issues or pull requests.
+This prototype was built iteratively with AI coding assistance (Claude) - many short, exploratory commits no polished PRs. The cleanup reflected in recent commits and the `main` branch represents consolidating that exploration into something coherent to share.
